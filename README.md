@@ -9,3 +9,6 @@ CNN + LSTM for word lip reading using the GRID dataset.
 ## Datasets: ##
 * [MIRACL-VC1](https://sites.google.com/site/achrafbenhamadou/-datasets/miracl-vc1)
 * [GRID](http://spandh.dcs.shef.ac.uk/gridcorpus/)
+
+## Misc: ##
+* [CTC Article](https://gab41.lab41.org/speech-recognition-you-down-with-ctc-8d3b558943f0)
