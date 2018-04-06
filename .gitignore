@@ -1,2 +1,3 @@
 vgg16/vgg16/
 data/
+__pycache__/
