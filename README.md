@@ -12,3 +12,9 @@ CNN + LSTM for word lip reading using the GRID dataset.
 
 ## Misc: ##
 * [CTC Article](https://gab41.lab41.org/speech-recognition-you-down-with-ctc-8d3b558943f0)
+
+## Download GRID Dataset: ##
+```
+cd data
+./get_data.sh
+```
