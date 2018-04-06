@@ -18,3 +18,9 @@ CNN + LSTM for word lip reading using the GRID dataset.
 cd data
 ./get_data.sh
 ```
+
+## Download VGG-16: ##
+```
+cd vgg16
+python get_vgg16.py
+```
