@@ -2,3 +2,6 @@ vgg16/vgg16/
 data/
 __pycache__/
 *.pyc
+
+*.swp
+.DS_Store
