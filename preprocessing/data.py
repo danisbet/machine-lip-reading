@@ -5,6 +5,8 @@ from video import read_video
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/../data'
 
+
+
 def load_data(verbose=False, framebyframe=False):
     for root, dirs, files in os.walk(DATA_PATH):
         for name in files:
@@ -26,5 +28,5 @@ def load_data(verbose=False, framebyframe=False):
                     yield video, words
 
 if __name__ == "__main__":
-    for img, word in load_data(verbose=False, framebyframe=True):
+    for img, word in load_data(verbose=False, framebyframe=False):
         print(img, word)
