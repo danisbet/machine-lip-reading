@@ -27,5 +27,5 @@ def load_data(verbose=False, framebyframe=False):
                     yield video, words
 
 if __name__ == "__main__":
-    for img, word in load_data(verbose=False, framebyframe=True):
-        print(img, word)
+    for img, word in load_data(verbose=True, framebyframe=True):
+        #print(img, word)
