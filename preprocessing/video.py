@@ -1,4 +1,5 @@
 import dlib
+import numpy as np
 from skvideo.io import vread
 from scipy.misc import imresize
 
