@@ -13,7 +13,7 @@ def load_data(verbose=False, framebyframe=False):
                 if verbose is True:
                     print("reading: " + root)
 
-                video = read_video(os.path.join(root, name))
+                video = read_video(os.path.join(root, name), PREDICTOR_PATH)
                 words = read_align(os.path.join(root, '../align/', name.split(".")[0] + ".align"))
                
                 if verbose is True:
