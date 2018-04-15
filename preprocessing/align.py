@@ -1,6 +1,6 @@
 import numpy as np
 
-def read_align(path_to_align = None):
+def read_align(path_to_align=None):
 
     with open(path_to_align, 'r') as f:
         lines = f.readlines()	
