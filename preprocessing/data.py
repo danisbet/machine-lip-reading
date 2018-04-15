@@ -4,6 +4,7 @@ from video import read_video
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/../data'
+PREDICTOR_PATH = CURRENT_PATH + '/shape_predictor_68_face_landmarks.dat'
 
 def load_data(verbose=False, framebyframe=False):
     for root, dirs, files in os.walk(DATA_PATH):
