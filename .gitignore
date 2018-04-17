@@ -1,6 +1,7 @@
 vgg16/vgg16/
 data/
 preprocessing/venv/
+
 __pycache__/
 *.pyc
 
