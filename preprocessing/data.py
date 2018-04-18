@@ -4,6 +4,9 @@ from video import read_video
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/../data'
+PREDICTOR_PATH = CURRENT_PATH + '/shape_predictor_68_face_landmarks.dat'
+
+
 
 def load_data(datapath, verbose=False, framebyframe=False):
     for root, dirs, files in os.walk(datapath):
@@ -12,8 +15,7 @@ def load_data(datapath, verbose=False, framebyframe=False):
                 if verbose is True:
                     print("reading: " + root)
 
-                print(os.path.join(root, name))
-                video = read_video(os.path.join(root, name))
+                video = read_video(os.path.join(root, name), PREDICTOR_PATH)
                 words = read_align(os.path.join(root, '../align/', name.split(".")[0] + ".align"))
                
                 if verbose is True:
@@ -29,3 +31,4 @@ def load_data(datapath, verbose=False, framebyframe=False):
 if __name__ == "__main__":
     for img, word in load_data(DATA_PATH, verbose=False, framebyframe=True):
         print(img, word)
+
