@@ -51,12 +51,13 @@ def read_data():
     return x, y
 
 def main():
+    epochs = 10
     x, y = read_data()
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
 
     model = build_model()
-    history = train(model, x_train, y_train)
+    history = train(model, x_train, y_train, epochs=epochs)
 
     print("Saving model...")
     model.model.save('model.h5') 
