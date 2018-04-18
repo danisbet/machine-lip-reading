@@ -7,4 +7,4 @@ def read_video(path, verbose=False):
     return video
 
 if __name__ == "__main__":
-    read_video('../data/s1/video/srbizp.mpg', verbose=True)
+    read_video('/Users/alex/machine-lip-reading/train/../data/s1/video/prwq3s.mpg', verbose=True)

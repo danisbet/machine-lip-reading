@@ -5,13 +5,14 @@ from video import read_video
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/../data'
 
-def load_data(verbose=False, framebyframe=False):
-    for root, dirs, files in os.walk(DATA_PATH):
+def load_data(datapath, verbose=False, framebyframe=False):
+    for root, dirs, files in os.walk(datapath):
         for name in files:
             if '.mpg' in name:
                 if verbose is True:
                     print("reading: " + root)
 
+                print(os.path.join(root, name))
                 video = read_video(os.path.join(root, name))
                 words = read_align(os.path.join(root, '../align/', name.split(".")[0] + ".align"))
                
@@ -26,5 +27,5 @@ def load_data(verbose=False, framebyframe=False):
                     yield video, words
 
 if __name__ == "__main__":
-    for img, word in load_data(verbose=False, framebyframe=True):
+    for img, word in load_data(DATA_PATH, verbose=False, framebyframe=True):
         print(img, word)
