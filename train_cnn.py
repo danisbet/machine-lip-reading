@@ -34,27 +34,38 @@ def read_data():
 
     x = list()
     y = list()
+    t = list()
     print("loading images...")
-    for i, (img, word) in enumerate(load_data(DATA_PATH, verbose=True, framebyframe=True)):
+    for i, (img, words) in enumerate(load_data(DATA_PATH, verbose=False, framebyframe=False)):
+        if img.shape[0] != 75:
+            continue
         x.append(img)
-        y.append(word)
-        if i == 5:
+        y.append(words)
+
+        t += words.tolist()
+        if i == 3:
             break
+
+    t = le.fit_transform(t)
+    oh.fit(t.reshape(-1, 1))
 
     print("convering to np array...")
     x = np.stack(x, axis=0)
 
     print("transforming y...")
-    y = le.fit_transform(y)
-    y = oh.fit_transform(y.reshape(-1, 1)).todense()
+    for i in range(len(y)):
+        y_ = le.transform(y[i])
+        y[i] = np.asarray(oh.transform(y_.reshape(-1, 1)).todense())
+    y = np.stack(y, axis=0)
 
     return x, y
 
 def main():
     epochs = 10
     x, y = read_data()
-
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
+    print("training data shapes:", x.shape, y.shape)
+    
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
     model = build_model()
     history = train(model, x_train, y_train, epochs=epochs)
