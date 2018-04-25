@@ -28,9 +28,10 @@ def build_model(input_size, output_size):
     model.add(ZeroPadding3D(padding=(3,2,2), name='padding1', input_shape=(input_size)))
     #not too sure why they use he initialization https://datascience.stackexchange.com/questions/13061/when-to-use-he-or-glorot-normal-initialization-over-uniform-init-and-what-are
     #Rather than xavier (I used xavier initialization for S&G)
-    model.add(Conv3D(32, (7,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='conv1'))
-    model.add(MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='max3'))
-    model.add(Dropout(0.5))    
+    model.add(Conv3D(filters=32, kernel_size=(7,5,5), strides=(1,2,2), padding='valid', activation='relu', kernel_initializer='glorot_normal', name='conv1'))
+    model.summary()
+    model.add(MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='max1'))
+    model.add(Dropout(0.5))
 
     model.add(ZeroPadding3D(padding=(2,2,2), name='padding2') )
     #not entirely sure whether striding in time domain is a good idea
@@ -80,45 +81,11 @@ def train(model, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0
                         verbose=1)
     return history
 
-def read_data():
-    oh = OneHotEncoder()
-    le = LabelEncoder()
-
-    x = list()
-    y = list()
-    t = list()
-    print("loading images...")
-    for i, (img, words) in enumerate(load_data(DATA_PATH, verbose=False, framebyframe=False)):
-        if img.shape[0] != 75:
-            continue
-        x.append(img)
-        y.append(words)
-
-        t += words.tolist()
-        if i == 3:
-            break
-
-    t = le.fit_transform(t)
-    oh.fit(t.reshape(-1, 1))
-
-    print("convering to np array...")
-    x = np.stack(x, axis=0)
-
-    print("transforming y...")
-    for i in range(len(y)):
-        y_ = le.transform(y[i])
-        y[i] = np.asarray(oh.transform(y_.reshape(-1, 1)).todense())
-    y = np.stack(y, axis=0)
-
-    return x, y
-
-
-
 
 def main():
-
     epochs = 10
-    x, y = read_data()
+    x, y = load_data(DATA_PATH, verbose=False, num_samples=5)
+
     print("training data shapes:", x.shape, y.shape)
     
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
