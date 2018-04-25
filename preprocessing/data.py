@@ -19,7 +19,7 @@ def text_to_labels(text):
     return ret
 
 
-def load_data(datapath, verbose=False, num_samples=5, ctc_encoding=False):
+def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
     oh = OneHotEncoder()
     le = LabelEncoder()
 
