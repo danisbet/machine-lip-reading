@@ -6,6 +6,8 @@ def read_align(path_to_align=None):
         lines = f.readlines()	
 
     align = [(int(y[0])/1000, int(y[1])/1000, y[2]) for y in [x.strip().split(" ") for x in lines]]
+    return align
+
     words = []
     words.append('sil')
 

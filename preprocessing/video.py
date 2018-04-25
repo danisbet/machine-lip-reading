@@ -33,7 +33,7 @@ def get_frames_mouth(detector, predictor, frames):
                 i += 1
                 if i < 48: # Only take mouth region
                     continue
-                mouth_points.append((part.x,part.y))
+                mouth_points.append((part.x, part.y))
             np_mouth_points = np.array(mouth_points)
 
             mouth_centroid = np.mean(np_mouth_points[:, -2:], axis=0)
