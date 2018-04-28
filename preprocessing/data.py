@@ -60,13 +60,14 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                         print(str(counter) + ": " + str(start) + "--" + str(stop) + ": " + word)
                     
                     _, d1, d2, d3 = video[start:stop].shape
-                    print(d1, d2, d3)
                     
                     if (len(x_raw) > 0):
                         _, prev_d1, prev_d2, prev_d3 = x_raw[-1].shape
                         if (d1, d2, d3) != (prev_d1, prev_d2, prev_d3):
-                            print("different size, skip")
+                            if verbose is True:
+                                print("different size, skip")
                             continue
+                    
                     x_raw.append(video[start:stop])
                     y_raw.append(word)
 
@@ -87,35 +88,27 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
         y_raw = le.fit_transform(y_raw)
         y = oh.fit_transform(y_raw.reshape(-1, 1)).todense()
 
-#     skip = 0
+
     for i in range(len(x_raw)):
         result = np.zeros((max_len, x_raw[i].shape[1], x_raw[i].shape[2], x_raw[i].shape[3]))
         result[:x_raw[i].shape[0], :x_raw[i].shape[1], :x_raw[i].shape[2], :x_raw[i].shape[3]] = x_raw[i]
         if verbose is True:
             print(str(i) + ": " + str(result.shape))
         x_raw[i] = result
-#         if i == 0:
-#             x_raw[i - skip] = result    
-#         elif result.shape == x_raw[i - skip - 1].shape:   
-#             x_raw[i - skip] = result
-#         else:
-#             print("different shape, skip")
-#             skip += 1
-#             continue
+
         if verbose is True:
             print("Added: " + str(x_raw[i].shape)) 
         
         if ctc_encoding:
             res = np.ones(max_word_len) * -1
-            enc = np.array(text_to_labels(y_raw[i - skip]))
+            enc = np.array(text_to_labels(y_raw[i]))
             res[:enc.shape[0]] = enc
-            print(res.shape)
-            y_raw[i - skip] = res
+            y_raw[i] = res
 
     if ctc_encoding:
-        y = np.stack(y_raw[: len(x_raw) - skip], axis=0)
+        y = np.stack(y_raw, axis=0)
 
-    x = np.stack(x_raw[: len(x_raw) - skip], axis=0)
+    x = np.stack(x_raw, axis=0)
     
     return x, y, np.array(word_len_list), np.array(input_len_list)
 
