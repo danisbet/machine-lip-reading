@@ -33,7 +33,6 @@ def CTC(name, args):
 def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len = 20):
     # model = Sequential()
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
-    input_size[0] = max_seq_len
     x = ZeroPadding3D(padding=(3,2,2), name='padding1', input_shape=(input_size))(input_data)
     x = TimeDistributed(Conv2D(filters = 32, kernel_size = 5, strides = (2,2),
                              padding = 'same', activation = 'relu'))(Input_layer)
@@ -70,7 +69,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
 
     return model
 def pad_labels(labels, max_string_len):
-    padding = np.ones((labels.shape[0],max_string_len - labels.shape[1])) * -1
+    padding = np.ones((labels.shape[0], max_string_len - labels.shape[1])) * -1
     return np.concatenate(labels, padding, axis = 1)
 
 def train(model, x_train, y_train, max_string_len, max_seq_len, batch_size=256, epochs=100, val_train_ratio=0.2):
