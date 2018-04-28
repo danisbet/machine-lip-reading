@@ -3,10 +3,12 @@ import os
 from align import read_align
 from video import read_video
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+import re
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/../data'
 PREDICTOR_PATH = CURRENT_PATH + '/shape_predictor_68_face_landmarks.dat'
+
 
 
 def text_to_labels(text):
@@ -43,7 +45,18 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
     x_raw = list()
     y_raw = list()
+    pattern = re.compile("s[0-9]")
+    speakers = []
+    
     for root, dirs, files in os.walk(datapath):
+        check = root.split("/")[-1]
+        match = pattern.findall(check)
+        if (len(match) > 0):
+            if check.index(match[0]) == 0:
+                if verbose:
+                    print(check, match[0])
+                speakers.append(check)
+        
         for name in files:
             if '.mpg' in name:
                 if verbose is True:
@@ -79,8 +92,10 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                     if counter == num_samples:
                         done = True
                         break
+            
             if done:
                 break
+        
         if done:
             break
     
@@ -109,8 +124,9 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
         y = np.stack(y_raw, axis=0)
 
     x = np.stack(x_raw, axis=0)
-    np.save("test_savex", x_raw)
-    np.save("test_savey", y_raw)
+#     print(root)
+#     np.save("test_savex", x_raw)
+#     np.save("test_savey", y_raw)
     return x, y, np.array(word_len_list), np.array(input_len_list)
 
 if __name__ == "__main__":
