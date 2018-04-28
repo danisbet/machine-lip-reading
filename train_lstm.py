@@ -12,7 +12,7 @@ from keras.layers.recurrent import GRU
 from keras.layers import Input
 from keras.layers.convolutional import Conv2D, MaxPooling2D, ZeroPadding3D
 from keras.layers.core import Lambda, Dropout, Flatten, Dense, Activation
-from Keras.optimizers import Adam
+from keras.optimizers import Adam
 from keras import backend as K
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
