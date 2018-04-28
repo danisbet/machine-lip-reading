@@ -21,14 +21,19 @@ CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/data'
 
 def ctc_lambda_func(args):
+    import tensorflow as tf
     y_pred, labels, input_length, label_length = args
     # From Keras example image_ocr.py:
     # the 2 is critical here since the first couple outputs of the RNN
     # tend to be garbage:
     # y_pred = y_pred[:, 2:, :]
-    y_pred = y_pred[:, :, :]
-    return K.ctc_batch_cost(labels, y_pred, input_length, label_length, ignore_longer_outputs_than_inputs=True)
-
+    label_length = K.cast(tf.squeeze(label_length),'int32')
+    input_length = K.cast(tf.squeeze(input_length),'int32')
+    labels = K.ctc_label_dense_to_spqrse(labels, label_length)
+    #y_pred = y_pred[:, :, :]
+    #return K.ctc_batch_cost(labels, y_pred, input_length, label_length, ignore_longer_outputs_than_inputs=True)
+    return tf.nnctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
+                         ignore_longer_outputs_than_inputs = True, time_major = False)
 def CTC(name, args):
 	return Lambda(ctc_lambda_func, output_shape=(1,), name=name)(args)
 
