@@ -133,7 +133,7 @@ def main():
 
     start = time.time()
     print("loading data")
-    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=10, ctc_encoding=True)
+    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=100, ctc_encoding=True)
     end = time.time()
 
     print("load data took", end-start)
@@ -148,18 +148,19 @@ def main():
     print("Saving model...")
     model.save('model.h5')
 
+    # TODO: add visualization
     print("Plotting...")
-    f, (ax1, ax2) = plt.subplots(2, 1)
-    ax1.plot(range(1, epochs+1), history.history['val_acc'], 'tab:blue', label="validation accuracy")
-    ax1.plot(range(1, epochs+1), history.history['acc'], 'tab:red', label="training accuracy")
+    #f, (ax1, ax2) = plt.subplots(2, 1)
+    #ax1.plot(range(1, epochs+1), history.history['val_acc'], 'tab:blue', label="validation accuracy")
+    #ax1.plot(range(1, epochs+1), history.history['acc'], 'tab:red', label="training accuracy")
 
-    ax2.plot(range(1, epochs+1), history.history['loss'], 'tab:orange', label="loss")
-    ax2.plot(range(1, epochs+1), history.history['val_loss'], 'tab:green', label="validation loss")
+    #ax2.plot(range(1, epochs+1), history.history['loss'], 'tab:orange', label="loss")
+    #ax2.plot(range(1, epochs+1), history.history['val_loss'], 'tab:green', label="validation loss")
 
-    ax1.legend()
-    ax2.legend()
+    #ax1.legend()
+    #ax2.legend()
 
-    f.savefig('training.png', dpi=300)
+    #f.savefig('training.png', dpi=300)
     print("Done.")
 
 
