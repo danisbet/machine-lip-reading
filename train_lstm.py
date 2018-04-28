@@ -128,7 +128,7 @@ def main():
 
     start = time.time()
     print("loading data")
-    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=50, ctc_encoding=True)
+    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=100, ctc_encoding=True)
     end = time.time()
 
     print("load data took", end-start)
@@ -141,7 +141,7 @@ def main():
     history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
 
     print("Saving model...")
-    model.model.save('model.h5') 
+    model.save('model.h5')
 
     print("Plotting...")
     f, (ax1, ax2) = plt.subplots(2, 1)
