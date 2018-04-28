@@ -35,7 +35,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
     x = ZeroPadding3D(padding=(3,2,2), name='padding1', input_shape=(input_size))(input_data)
     x = TimeDistributed(Conv2D(filters = 32, kernel_size = 5, strides = (2,2),
-                             padding = 'same', activation = 'relu'))(Input_layer)
+                             padding = 'same', activation = 'relu'))(x)
 
     x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
     x = Dropout(0.5)(x)
