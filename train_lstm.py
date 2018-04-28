@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 from keras.models import Model
 from keras.layers.wrappers import TimeDistributed, Bidirectional
-from keras.layers.recurrent import LSTM
+from keras.layers.recurrent import GRU
 from keras.layers import Input
 from keras.layers.convolutional import Conv2D, MaxPooling2D, ZeroPadding3D
 from keras.layers.core import Lambda, Dropout, Flatten, Dense, Activation
@@ -36,7 +36,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
     x = ZeroPadding3D(padding=(0,2,2), name='padding1')(input_data)
     x = TimeDistributed(Conv2D(filters = 32, kernel_size = 5, strides = (2,2),
                              padding = 'same', activation = 'relu'))(x)
-
+    print
     x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
     x = Dropout(0.5)(x)
 
@@ -52,7 +52,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
 
     input_lstm = TimeDistributed(Flatten())(x)
 
-    x_lstm = Bidirectional(LSTM(256), merge_mode='concat', weights=None)(input_lstm)
+    x_lstm = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'), merge_mode='concat')(input_lstm)
     x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
     print "after dense1"
     y_pred = Activation('softmax', name='softmax')(x_lstm)
