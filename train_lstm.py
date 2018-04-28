@@ -54,7 +54,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
 
     x_lstm = Bidirectional(LSTM(256), merge_mode='concat', weights=None)(input_lstm)
     x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
-
+    print "after dense1"
     y_pred = Activation('softmax', name='softmax')(x_lstm)
 
     labels = Input(name='the_labels', shape = [max_string_len], dtype='float32')
@@ -63,7 +63,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
     loss = CTC('ctc',[y_pred, labels, input_length, label_length])
     model = Model(inputs=[input_data, labels, label_length, input_length],
                   outputs = loss)
-
+    model.summary()
     # Build model here...
 
     return model
@@ -121,6 +121,7 @@ def main():
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
     model = build_model(x.shape[1:], 28, max_string_len = 10, max_seq_len = 20)
+
     history = train(model, x_train, y_train, max_string_len = 10, max_seq_len = 20, epochs=epochs)
 
     print("Saving model...")
