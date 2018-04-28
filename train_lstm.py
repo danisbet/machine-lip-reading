@@ -53,7 +53,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
     input_lstm = TimeDistributed(Flatten())(x)
 
     x_lstm = Bidirectional(LSTM(256), merge_mode='concat', weights=None)(input_lstm)
-    x_lstm = TimeDistributed(Dense(output_size, kernel_initializer='he_normal', name='dense1'))(x_lstm)
+    x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
     print "after dense1"
     y_pred = Activation('softmax', name='softmax')(x_lstm)
 
