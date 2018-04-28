@@ -53,8 +53,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
     input_lstm = TimeDistributed(Flatten())(x)
 
     x_lstm = Bidirectional(LSTM(256), merge_mode='concat', weights=None)(input_lstm)
-    x_lstm = Dropout(0.5)(x_lstm)
-    x_lstm = Dense(output_size)(x_lstm)
+    x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
 
     y_pred = Activation('softmax', name='softmax')(x_lstm)
 
@@ -75,7 +74,7 @@ def pad_labels(labels, max_string_len):
 def train(model, x_train, y_train, max_string_len = 10, max_seq_len = 20, batch_size=256, epochs=100, val_train_ratio=0.2):
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
-    history = model.fit(x = [x_train, y_train, input_length, max_string_len, x_train.shape[1]], y = None,
+    history = model.fit(x = [x_train, y_train, max_string_len, x_train.shape[1]], y = None,
                         batch_size=batch_size,
                         epochs=epochs,
                         validation_split=val_train_ratio,
