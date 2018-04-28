@@ -27,7 +27,7 @@ def ctc_lambda_func(args):
     # tend to be garbage:
     # y_pred = y_pred[:, 2:, :]
     y_pred = y_pred[:, :, :]
-    return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
+    return K.ctc_batch_cost(labels, y_pred, input_length, label_length, ignore_longer_outputs_than_inputs=True)
 
 def CTC(name, args):
 	return Lambda(ctc_lambda_func, output_shape=(1,), name=name)(args)
@@ -124,7 +124,7 @@ def read_data():
     return x, y
 
 def main():
-    epochs = 10
+    epochs = 100
 
     start = time.time()
     print("loading data")
