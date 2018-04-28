@@ -78,7 +78,7 @@ def train(model, x_train, y_train, max_string_len = 10, max_seq_len = 20, batch_
 
     adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
-    history = model.fit(x = [x_train, y_train, max_string_len, x_train.shape[1]], y = None,
+    history = model.fit(x = {'the_input':x_train, 'the_labels':y_train, 'label_length':np.array(max_string_len), 'input_length':np.array(x_train.shape[1])}, y = None,
                         batch_size=batch_size,
                         epochs=epochs,
                         validation_split=val_train_ratio,
