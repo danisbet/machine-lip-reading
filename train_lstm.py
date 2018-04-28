@@ -69,17 +69,21 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
     return model
 def pad_labels(labels, max_string_len):
     padding = np.ones((labels.shape[0], max_string_len - labels.shape[1])) * -1
-    return np.concatenate(labels, padding, axis = 1)
+    return np.concatenate((labels, padding), axis = 1)
 
 def train(model, x_train, y_train, max_string_len = 10, max_seq_len = 20, batch_size=256, epochs=100, val_train_ratio=0.2):
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
+
+    adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
     history = model.fit(x = [x_train, y_train, max_string_len, x_train.shape[1]], y = None,
                         batch_size=batch_size,
                         epochs=epochs,
                         validation_split=val_train_ratio,
                         shuffle=True,
                         verbose=1)
+
     return history
 
 def read_data():
