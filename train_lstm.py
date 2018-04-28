@@ -32,7 +32,7 @@ def ctc_lambda_func(args):
     labels = K.ctc_label_dense_to_sparse(labels, label_length)
     #y_pred = y_pred[:, :, :]
     #return K.ctc_batch_cost(labels, y_pred, input_length, label_length, ignore_longer_outputs_than_inputs=True)
-    return tf.nnctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
+    return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
                          ignore_longer_outputs_than_inputs = True, time_major = False)
 def CTC(name, args):
 	return Lambda(ctc_lambda_func, output_shape=(1,), name=name)(args)
