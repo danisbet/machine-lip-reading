@@ -29,7 +29,7 @@ def ctc_lambda_func(args):
     # y_pred = y_pred[:, 2:, :]
     label_length = K.cast(tf.squeeze(label_length),'int32')
     input_length = K.cast(tf.squeeze(input_length),'int32')
-    labels = K.ctc_label_dense_to_spqrse(labels, label_length)
+    labels = K.ctc_label_dense_to_sparse(labels, label_length)
     #y_pred = y_pred[:, :, :]
     #return K.ctc_batch_cost(labels, y_pred, input_length, label_length, ignore_longer_outputs_than_inputs=True)
     return tf.nnctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
@@ -133,7 +133,7 @@ def main():
 
     start = time.time()
     print("loading data")
-    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=100, ctc_encoding=True)
+    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=10, ctc_encoding=True)
     end = time.time()
 
     print("load data took", end-start)
