@@ -72,10 +72,10 @@ def pad_labels(labels, max_string_len):
     padding = np.ones((labels.shape[0], max_string_len - labels.shape[1])) * -1
     return np.concatenate(labels, padding, axis = 1)
 
-def train(model, x_train, y_train, max_string_len, max_seq_len, batch_size=256, epochs=100, val_train_ratio=0.2):
+def train(model, x_train, y_train, max_string_len = 10, max_seq_len = 20, batch_size=256, epochs=100, val_train_ratio=0.2):
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
-    history = model.fit(x = [x_train, y_train, input_length, max_string_len, max_seq_len], y = None,
+    history = model.fit(x = [x_train, y_train, input_length, max_string_len, x_train.shape[1]], y = None,
                         batch_size=batch_size,
                         epochs=epochs,
                         validation_split=val_train_ratio,
@@ -121,7 +121,7 @@ def main():
     print("training data shapes:", x.shape, y.shape)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-    model = build_model(x.shape[1:], y.shape[1:], max_string_len = 10, max_seq_len = 20)
+    model = build_model(x.shape[1:], 28, max_string_len = 10, max_seq_len = 20)
     history = train(model, x_train, y_train, max_string_len = 10, max_seq_len = 20, epochs=epochs)
 
     print("Saving model...")
