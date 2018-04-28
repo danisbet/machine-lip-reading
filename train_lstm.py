@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 
+import time
+
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from sklearn.model_selection import train_test_split
 
@@ -123,7 +125,13 @@ def read_data():
 
 def main():
     epochs = 10
+
+    start = time.time()
+    print("loading data")
     x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=500, ctc_encoding=True)
+    end = time.time()
+
+    print("load data took", end-start)
     print("training data shapes:", x.shape, y.shape)
     x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
     input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
