@@ -128,7 +128,7 @@ def main():
 
     start = time.time()
     print("loading data")
-    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=500, ctc_encoding=True)
+    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=50, ctc_encoding=True)
     end = time.time()
 
     print("load data took", end-start)
