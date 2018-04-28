@@ -41,12 +41,12 @@ def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len =
     x = Dropout(0.5)(x)
 
     x = TimeDistributed(Conv2D(filters=32, kernel_size=5, strides=(2, 2),
-                               padding='same', activation='relu'))(Input_layer)
+                               padding='same', activation='relu'))(x)
     x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
     x = Dropout(0.5)(x)
 
     x = TimeDistributed(Conv2D(filters=4, kernel_size=5, strides=(2, 2),
-                               padding='same', activation='relu'))(Input_layer)
+                               padding='same', activation='relu'))(x)
     x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
     x = Dropout(0.5)(x)
 
