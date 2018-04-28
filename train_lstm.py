@@ -65,9 +65,9 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     print "after dense1"
     y_pred = Activation('softmax', name='softmax')(x_lstm)
 
-    labels = Input(name='the_labels', shape = [max_string_len], dtype='float32')
-    input_length = Input(name = 'input_length', shape =[1], dtype = 'int64')
-    label_length = Input(name = 'label_length', shape = [1], dtype = 'int64')
+    labels = Input(name='the_labels', shape = [max_string_len], dtype='int32')
+    input_length = Input(name = 'input_length', shape =[1], dtype = 'int32')
+    label_length = Input(name = 'label_length', shape = [1], dtype = 'int32')
     loss = CTC('ctc',[y_pred, labels, input_length, label_length])
     model = Model(inputs=[input_data, labels, label_length, input_length],
                   outputs = loss)
