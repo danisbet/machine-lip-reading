@@ -109,11 +109,13 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
         y = np.stack(y_raw, axis=0)
 
     x = np.stack(x_raw, axis=0)
-    
+    np.save("test_savex", x_raw)
+    np.save("test_savey", y_raw)
     return x, y, np.array(word_len_list), np.array(input_len_list)
 
 if __name__ == "__main__":
     X, y = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=15)
+    np.savetext("test_save", (X, y))
     print("X:", X.shape)
     print("y:", y.shape)
     print(y)
