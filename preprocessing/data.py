@@ -38,6 +38,9 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
     max_len = 0
     max_word_len = 0
 
+    word_len_list = []
+    input_len_list = []
+
     x_raw = list()
     y_raw = list()
     for root, dirs, files in os.walk(datapath):
@@ -58,7 +61,8 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
                     max_word_len = max(max_word_len, len(word))
                     max_len = max(max_len, stop-start)
-
+                    word_len_list.append(len(word))
+                    input_len_list.append(stop-start)
                     counter += 1
                     if counter == num_samples:
                         done = True
@@ -88,7 +92,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
     x = np.stack(x_raw, axis=0)
     
-    return x, y
+    return x, y, np.array(word_len_list), np.array(input_len_list)
 
 if __name__ == "__main__":
     X, y = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=15)

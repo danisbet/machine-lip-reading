@@ -31,7 +31,7 @@ def CTC(name, args):
 	return Lambda(ctc_lambda_func, output_shape=(1,), name=name)(args)
 
 
-def build_model(input_size, output_size = 28, max_string_len = 10, max_seq_len = 20):
+def build_model(input_size, output_size = 28, max_string_len = 10):
     # model = Sequential()
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
     x = ZeroPadding3D(padding=(0,2,2), name='padding1')(input_data)
@@ -72,13 +72,15 @@ def pad_labels(labels, max_string_len):
     padding = np.ones((labels.shape[0], max_string_len - labels.shape[1])) * -1
     return np.concatenate((labels, padding), axis = 1)
 
-def train(model, x_train, y_train, max_string_len = 10, max_seq_len = 20, batch_size=256, epochs=100, val_train_ratio=0.2):
+def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=256, epochs=100, val_train_ratio=0.2):
+    max_string_len = 10
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
 
     adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
-    history = model.fit(x = {'the_input':x_train, 'the_labels':y_train, 'label_length':np.array(max_string_len), 'input_length':np.array(x_train.shape[1])}, y = None,
+    history = model.fit(x = {'the_input':x_train, 'the_labels':y_train, 'label_length':label_len_train,
+                             'input_length':input_len_train}, y = None,
                         batch_size=batch_size,
                         epochs=epochs,
                         validation_split=val_train_ratio,
@@ -121,13 +123,14 @@ def read_data():
 
 def main():
     epochs = 10
-    x, y = load_data(DATA_PATH, verbose=False, num_samples=5, ctc_encoding=True)
+    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=5, ctc_encoding=True)
     print("training data shapes:", x.shape, y.shape)
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+    x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
+    input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
 
-    model = build_model(x.shape[1:], 28, max_string_len = 10, max_seq_len = 20)
+    model = build_model(x.shape[1:], 28, max_string_len = 10)
 
-    history = train(model, x_train, y_train, max_string_len = 10, max_seq_len = 20, epochs=epochs)
+    history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
 
     print("Saving model...")
     model.model.save('model.h5') 
