@@ -8,7 +8,7 @@ import re
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/../data'
 PREDICTOR_PATH = CURRENT_PATH + '/shape_predictor_68_face_landmarks.dat'
-
+SAVE_NUMPY_PATH = CURRENT_PATH + '/../data/numpy_results'
 
 
 def text_to_labels(text):
@@ -45,17 +45,30 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
     x_raw = list()
     y_raw = list()
-    pattern = re.compile("s[0-9]")
+    
+    pattern = re.compile("s[0-9]") 
     speakers = []
+    x_raws = {}
+    y_raws = {}
+    prev_speaker_count = 0
     
     for root, dirs, files in os.walk(datapath):
         check = root.split("/")[-1]
         match = pattern.findall(check)
         if (len(match) > 0):
-            if check.index(match[0]) == 0:
-                if verbose:
-                    print(check, match[0])
+            if check.index(match[0]) == 0 and check not in speakers:
+#                 if len(speakers) > 0:
+#                     x_raws.append(x_raw[prev_speaker_count : counter])
+#                     prev_speaker_count = counter
+#                     if verbose:
+#                         print("previous speaker x_raws")
+#                         print(x_raws)               
                 speakers.append(check)
+                x_raws[check] = []
+                y_raws[check] = []
+                if verbose:
+                    print("new speaker added")
+                    print(check, match[0])             
         
         for name in files:
             if '.mpg' in name:
@@ -83,7 +96,10 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                     
                     x_raw.append(video[start:stop])
                     y_raw.append(word)
-
+                    temp = video[start:stop]
+                    x_raws[speakers[-1]].append(temp)
+                    y_raws[speakers[-1]].append(word)
+                    
                     max_word_len = max(max_word_len, len(word))
                     max_len = max(max_len, stop-start)
                     word_len_list.append(len(word))
@@ -120,6 +136,11 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
             res[:enc.shape[0]] = enc
             y_raw[i] = res
 
+    for speaker in speakers:
+        np_save = SAVE_NUMPY_PATH + "/" + speaker
+        np.save(np_save + "x", x_raws[speaker])
+        np.save(np_save + "y", x_raws[speaker])
+        
     if ctc_encoding:
         y = np.stack(y_raw, axis=0)
 
@@ -131,7 +152,6 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
 if __name__ == "__main__":
     X, y = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=15)
-    np.savetext("test_save", (X, y))
     print("X:", X.shape)
     print("y:", y.shape)
     print(y)
