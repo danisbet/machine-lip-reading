@@ -118,7 +118,7 @@ def read_data():
 
 def main():
     epochs = 10
-    x, y = read_data()
+    x, y = load_data(DATA_PATH, verbose=False, num_samples=5, ctc_encoding=True)
     print("training data shapes:", x.shape, y.shape)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
