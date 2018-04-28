@@ -11,7 +11,7 @@ from keras.layers.wrappers import TimeDistributed, Bidirectional
 from keras.layers.recurrent import LSTM
 from keras.layers import Input
 from keras.layers.convolutional import Conv2D, MaxPooling2D
-from keras.layers.core import Lambda, Activitaion, Dropout, Flatten, Dense
+from keras.layers.core import Lambda, Dropout, Flatten, Dense
 from keras import backend as K
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
