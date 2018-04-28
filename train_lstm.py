@@ -10,7 +10,7 @@ from keras.models import Model
 from keras.layers.wrappers import TimeDistributed, Bidirectional
 from keras.layers.recurrent import LSTM
 from keras.layers import Input
-from keras.layers.convolutional import Conv2D, MaxPooling2D
+from keras.layers.convolutional import Conv2D, MaxPooling2D, ZeroPadding3D
 from keras.layers.core import Lambda, Dropout, Flatten, Dense
 from keras import backend as K
 
