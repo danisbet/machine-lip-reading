@@ -13,7 +13,6 @@ class Cnn(object):
     def __init__(self, input_size, output_size):
         self.input_size = input_size
         self.output_size = output_size
-        self.model = None
 
     def build(self):
         self.input_data = Input(name='input', shape=self.input_size, dtype='float32')
@@ -86,10 +85,6 @@ class Cnn(object):
         self.model = model
 
     def train(self, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0.2):
-        history = self.model.fit(x_train, y_train,
-                            batch_size=batch_size,
-                            epochs=epochs,
-                            validation_split=val_train_ratio,
-                            shuffle=True,
-                            verbose=1)
+        print('training')
+	history = self.model.fit(x_train, y_train, batch_size=batch_size,epochs=epochs,validation_split=val_train_ratio,shuffle=True,verbose=1)
         return history

@@ -28,8 +28,7 @@ def main():
 
 
 
-    return
-    history = train(model, x_train, y_train, epochs=epochs)
+    history = model.train(x_train, y_train, epochs=epochs)
 
     print("Saving model...")
     model.model.save('model.h5') 
