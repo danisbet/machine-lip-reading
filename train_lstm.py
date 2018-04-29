@@ -139,7 +139,7 @@ def main():
         print("training data shapes:", x.shape, y.shape)
         x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
         input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
-        if count == 0:
+        if count == 1:
             model = build_model(x.shape[1:], 28, max_string_len=10)
         history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
 
