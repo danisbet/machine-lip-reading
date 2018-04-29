@@ -61,8 +61,8 @@ class Statistics(keras.callbacks.Callback):
         self.model = model
         self.x_train = x_train
         self.y_train = y_train
-        self.input_length = input_length
-        self.label_length = label_length
+        self.input_len_train = input_len_train
+        self.label_len_train = label_len_train
         self.output_dir = output_dir
         self.num_sample_stats = num_samples_stats
         if output_dir is not None and not os.path.exist(output_dir):
