@@ -70,6 +70,7 @@ class Statistics(keras.callbacks.Callback):
 
 
     def get_statistics(self, num):
+        import tensorflow as tf
         num_left = num
         data = []
         source_str = []
@@ -82,6 +83,7 @@ class Statistics(keras.callbacks.Callback):
             input_layer = self.model.get_layer('padding1').input
             fn = K.function([input_layer],[output_layer])
             y_pred = fn([input_data['the_input']])
+            y_pred= tf.constant(y_pred)
             decoded_res = decode(y_pred, input_data['input_length'])
             for i in range(0, num_proc):
                 source_str.append(labels_to_text(self.y_train[i]))
