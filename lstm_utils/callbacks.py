@@ -66,7 +66,7 @@ class Statistics(keras.callbacks.Callback):
         self.output_dir = output_dir
         self.num_sample_stats = num_samples_stats
         if output_dir is not None and not os.path.exists(output_dir):
-            os.make_dir(self.output_dir)
+            os.makedirs(self.output_dir)
 
 
     def get_statistics(self, num):
