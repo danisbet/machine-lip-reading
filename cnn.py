@@ -78,7 +78,7 @@ class Cnn(object):
         
         model.summary()
         
-        adam = optimizers.Adam(lr=.001, decay=.001)
+        adam = optimizers.Adadelta()
         model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
         print("model built")
 
