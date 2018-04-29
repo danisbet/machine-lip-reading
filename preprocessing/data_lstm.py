@@ -50,7 +50,7 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
         for name in files:
             if '.mpg' in name:
                 if verbose is True:
-                    print(str(counter) + ": reading - " + root + name)
+                    print(str(counter) + ": reading from " + root + name)
 
                 video = read_video(os.path.join(root, name), PREDICTOR_PATH)
                 alignments = read_align(os.path.join(root, '../align/', name.split(".")[0] + ".align"))
@@ -100,14 +100,11 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
                         x = np.stack(x, axis=0)
 
                         print('saving numpy')
-                        np.savez_compressed(speaker + '_x_' + str(counter / num_samples), x=x)
-                        np.savez_compressed(speaker + '_y_' + str(counter / num_samples), y=y)
-                        np.savez_compressed(speaker + '_wi_' + str(counter / num_samples),
+                        np.savez_compressed(speaker + '_x' + str(counter / num_samples), x=x)
+                        np.savez_compressed(speaker + '_y' + str(counter / num_samples), y=y)
+                        np.savez_compressed(speaker + '_wi' + str(counter / num_samples),
                                             word_length=word_len_list, input_length=input_len_list)
-                        
-                        if counter == num_samples:
-                            return counter / num_samples
-                        
+                  
                         max_len = 0
                         max_word_len = 0
 
@@ -139,19 +136,19 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
     x = np.stack(x, axis=0)
 
     print('saving numpy')
-    np.savez_compressed(speaker + '_x_' + str(1 + counter / num_samples), x=x)
-    np.savez_compressed(speaker + '_y_' + str(1 + counter / num_samples), y=y)
-    np.savez_compressed(speaker + '_wi_' + str(1 + counter / num_samples),
+    np.savez_compressed(speaker + '_x' + str(1 + counter / num_samples), x=x)
+    np.savez_compressed(speaker + '_y' + str(1 + counter / num_samples), y=y)
+    np.savez_compressed(speaker + '_wi' + str(1 + counter / num_samples),
                         word_length=word_len_list, input_length=input_len_list)
     
     
     return 1 + counter / num_samples
 
 def read_data_for_speaker(speaker_id, count):
-    x = np.load(speaker_id + "_x_" + str(count) + ".npz")['x']
-    y = np.load(speaker_id + "_y_" + str(count) + ".npz")['y']
-    word_len = np.load(speaker_id + "_wi_" + str(count) + ".npz")['word_length']
-    input_len = np.load(speaker_id + "_wi_" + str(count) + ".npz")['input_length']
+    x = np.load(speaker_id + "_x" + count + ".npz")['x']
+    y = np.load(speaker_id + "_y" + count + ".npz")['y']
+    word_len = np.load(speaker_id + "_wi" + count + ".npz")['word_length']
+    input_len = np.load(speaker_id + "_wi" + count + ".npz")['input_length']
     return x, y, word_len, input_len
 
 
