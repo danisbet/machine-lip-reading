@@ -150,6 +150,8 @@ def main():
 
     # TODO: add visualization
     print("Plotting...")
+    # add decoding
+    # beam search
     #f, (ax1, ax2) = plt.subplots(2, 1)
     #ax1.plot(range(1, epochs+1), history.history['val_acc'], 'tab:blue', label="validation accuracy")
     #ax1.plot(range(1, epochs+1), history.history['acc'], 'tab:red', label="training accuracy")

@@ -112,6 +112,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
     x = np.stack(x_raw, axis=0)
     return x, y, np.array(word_len_list), np.array(input_len_list)
 
+
 def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, ctc_encoding=False):
     oh = OneHotEncoder()
     le = LabelEncoder()
