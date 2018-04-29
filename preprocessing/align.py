@@ -16,6 +16,6 @@ def read_align(path_to_align=None):
 	    	if i > j[0] and i <= j[1]:
 	    		words.append(j[2])
     dict_align  = np.array(words)
-    
+    print("read_align return type: " + type(dict_align))
     return dict_align
 

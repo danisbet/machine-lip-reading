@@ -100,9 +100,9 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
                         x = np.stack(x, axis=0)
 
                         print('saving numpy')
-                        np.savez_compressed(str(speaker) + '_x_' + str(counter % num_samples), x=x)
-                        np.savez_compressed(str(speaker) + '_y_' + str(counter % num_samples), y=y)
-                        np.savez_compressed(str(speaker) + '_wi_' + str(counter % num_samples),
+                        np.savez_compressed(str(speaker) + '_x_' + str(counter / num_samples), x=x)
+                        np.savez_compressed(str(speaker) + '_y_' + str(counter / num_samples), y=y)
+                        np.savez_compressed(str(speaker) + '_wi_' + str(counter / num_samples),
                                             word_length=word_len_list, input_length=input_len_list)
                         
 
@@ -115,6 +115,14 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
                         word_len_list = []
                         input_len_list = []
     
+    return counter / num_samples
+
+def read_data_for_speaker(speaker_id, count):
+    x = np.load(speaker_id + "_x_" + count + ".npz")['x']
+    y = np.load(speaker_id + "_y_" + count + ".npz")['y']
+    word_len = np.load(speaker_id + "_wi_" + count + ".npz")['word_length']
+    input_len = np.load(speaker_id + "_wi_" + count + ".npz")['input_length']
+    return x, y, word_len, input_len
 
 
 if __name__ == "__main__":
