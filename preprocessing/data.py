@@ -195,15 +195,15 @@ def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, c
     np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_x', x=x)
     np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_y', y=y)
     np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_wi', word_length=word_len_list, input_length=input_len_list)
-    return x, y, np.array(word_len_list), np.array(input_len_list), speaker_id
+    return speaker_id
 
 def read_data_for_speaker(speaker_id):
-    x_raw = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_x.npy")
-    x_raw = np.stack(x_raw, axis=0)
-    y_raw = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_y.npy")
-    word_len_list = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_word_len_list.npy")
-    input_len_list = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_input_len_list.npy")
-    return x_raw, y_raw, word_len_list, input_len_list
+    x = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_x.npz")['x']
+#     x_raw = np.stack(x_raw, axis=0)
+    y = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_y.npz")['y']
+    word_len = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_wi.npz")['word_length']
+    input_len = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_wi.npz")['input_length']
+    return x, y, word_len, input_len
 
 
 if __name__ == "__main__":
