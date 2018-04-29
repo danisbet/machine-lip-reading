@@ -52,7 +52,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
         for name in files:
             if '.mpg' in name:
                 if verbose is True:
-                    print("reading: " + root + "/" + name)
+                    #print("reading: " + root + "/" + name)
 
                 video = read_video(os.path.join(root, name), PREDICTOR_PATH)
                 alignments = read_align(os.path.join(root, '../align/', name.split(".")[0] + ".align"))
@@ -104,6 +104,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                         np.savez_compressed('data/s1_y_'+str(counter / num_samples), y=y)
                         np.savez_compressed('data/s1_wi_'+str(counter / num_samples), word_length=np.array(word_len_list),
                                             input_length=np.array(input_len_list))
+                        print ('successfully saved the %d th %d data'%(counter / num_samples, num_samples))
                         x_raw = []
                         y_raw = []
                         word_len_list = []
