@@ -81,7 +81,7 @@ class Statistics(keras.callbacks.Callback):
             output_layer = self.model.get_layer('ctc').input[0]
             input_layer = self.model.get_layer('padding1').input
             fn = K.function([input_layer],[output_layer])
-            y_pred = fn([input_data])
+            y_pred = fn([input_data['the_input']])
             decoded_res = decode(y_pred, input_data['input_length'])
             for i in range(0, num_proc):
                 source_str.append(labels_to_text(self.y_train[i]))
