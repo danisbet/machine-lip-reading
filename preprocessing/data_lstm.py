@@ -79,7 +79,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                     input_len_list.append(stop - start)
 
                     counter += 1
-                    if counter % num_samples = 0:
+                    if counter % num_samples == 0:
                         if not ctc_encoding:
                             y_raw = le.fit_transform(y_raw)
                             y = oh.fit_transform(y_raw.reshape(-1, 1)).todense()
