@@ -38,41 +38,41 @@ class Cnn(object):
 
         self.head1_flat  = Flatten()(self.head1_drop3)
 
-        print('head1 finished')
+        # print('head1 finished')
 
-        """
-        Head Two: Consider larger temporal features, 
+        # """
+        # Head Two: Consider larger temporal features, 
 
-        """
-        self.head2_zero1 = ZeroPadding3D(padding=(3,2,2), name='head2_zero1')(self.input_data)
-        self.head2_conv1 = Conv3D(4, (7,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head2_conv1')(self.head2_zero1)
-        self.head2_maxp1 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp1')(self.head2_conv1)
-        self.head2_drop1 = Dropout(0.5)(self.head2_maxp1)
+        # """
+        # self.head2_zero1 = ZeroPadding3D(padding=(3,2,2), name='head2_zero1')(self.input_data)
+        # self.head2_conv1 = Conv3D(4, (7,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head2_conv1')(self.head2_zero1)
+        # self.head2_maxp1 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp1')(self.head2_conv1)
+        # self.head2_drop1 = Dropout(0.5)(self.head2_maxp1)
 
-        self.head2_zero2 = ZeroPadding3D(padding=(3,2,2), name='head2_zero2')(self.head2_drop1)
-        self.head2_conv2 = Conv3D(16, (7,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head2_conv2')(self.head2_zero2)
-        self.head2_maxp2 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp2')(self.head2_conv2)
-        self.head2_drop2 = Dropout(0.5)(self.head2_maxp2)
+        # self.head2_zero2 = ZeroPadding3D(padding=(3,2,2), name='head2_zero2')(self.head2_drop1)
+        # self.head2_conv2 = Conv3D(16, (7,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head2_conv2')(self.head2_zero2)
+        # self.head2_maxp2 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp2')(self.head2_conv2)
+        # self.head2_drop2 = Dropout(0.5)(self.head2_maxp2)
 
-        self.head2_zero3 = ZeroPadding3D(padding=(3,1,1), name='head2_zero3')(self.head2_drop2)
-        self.head2_conv3 = Conv3D(32, (7,3,3), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head2_conv3')(self.head2_zero3)
-        self.head2_maxp3 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp3')(self.head2_conv3)
-        self.head2_drop3 = Dropout(0.5)(self.head2_maxp3)
+        # self.head2_zero3 = ZeroPadding3D(padding=(3,1,1), name='head2_zero3')(self.head2_drop2)
+        # self.head2_conv3 = Conv3D(32, (7,3,3), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head2_conv3')(self.head2_zero3)
+        # self.head2_maxp3 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp3')(self.head2_conv3)
+        # self.head2_drop3 = Dropout(0.5)(self.head2_maxp3)
 
-        self.head2_flat  = Flatten()(self.head1_drop3)
-        print('head2 finished')
-
-
-        """
-        Combine heads and compile model
-        """
+        # self.head2_flat  = Flatten()(self.head1_drop3)
+        # print('head2 finished')
 
 
-        self.concat = concatenate([self.head1_flat, self.head2_flat], axis=1)
-        temp_model = Model(input=self.input_data, output=self.concat)
-        temp_model.summary()
-        # self.flat = Flatten()(self.concat)
-        self.predictions = Dense(self.output_size, activation='softmax', kernel_initializer='glorot_normal', name='dense1')(self.concat)
+        # """
+        # Combine heads and compile model
+        # """
+
+
+        # self.concat = concatenate([self.head1_flat, self.head2_flat], axis=1)
+        # temp_model = Model(input=self.input_data, output=self.concat)
+        # temp_model.summary()
+        # # self.flat = Flatten()(self.concat)
+        self.predictions = Dense(self.output_size, activation='softmax', kernel_initializer='glorot_normal', name='dense1')(self.head1_flat)
         
         model = Model(input=self.input_data, output=self.predictions)
         
