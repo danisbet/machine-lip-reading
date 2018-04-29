@@ -94,14 +94,22 @@ class Statistics(keras.callbacks.Callback):
             num_left -= num_proc
 
         mean_cer, mean_cer_norm    = self.get_mean_character_error_rate(data)
-        mean_wer, mean_wer_norm    = self.get_mean_word_error_rate(data)
+        #mean_wer, mean_wer_norm    = self.get_mean_word_error_rate(data)
 
         return {
             'samples': num,
             'cer': (mean_cer, mean_cer_norm),
-            'wer': (mean_wer, mean_wer_norm),
         }
 
+    def get_mean_tuples(self, data, individual_length, func):
+        total = 0.0
+        total_norm = 0.0
+        length = len(data)
+        for i in range(0, length):
+            val = float(func(data[i][0], data[i][1]))
+            total += val
+            total_norm += val / individual_length
+        return (total / length, total_norm / length)
     def get_mean_character_error_rate(self, data):
         mean_individual_length = np.mean([len(pair[1]) for pair in data])
         return self.get_mean_tuples(data, mean_individual_length, editdistance.eval)
@@ -115,9 +123,9 @@ class Statistics(keras.callbacks.Callback):
         with open(os.path.join(self.output_dir, 'stats.csv'), 'wb') as csvfile:
             csvw = csv.writer(csvfile)
             csvw.writerow(
-                ["Epoch", "Samples", "Mean CER", "Mean CER (Norm)", "Mean WER", "Mean WER (Norm)"])
+                ["Epoch", "Samples", "Mean CER", "Mean CER (Norm)"])
 
     def on_epoch_end(self, epoch, logs={}):
         stats = self.get_statistics(self.num_sample_stats)
-        print('\n\n[Epoch %d] Out of %d samples: [CER: %.3f - %.3f] [WER: %.3f - %.3f] \n'
-              % (epoch, stats['samples'], stats['cer'][0], stats['cer'][1], stats['wer'][0], stats['wer'][1]))
+        print('\n\n[Epoch %d] Out of %d samples: [CER: %.3f - %.3f] \n'
+              % (epoch, stats['samples'], stats['cer'][0], stats['cer'][1]))
