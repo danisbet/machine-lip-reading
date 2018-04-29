@@ -1,4 +1,6 @@
 from preprocessing.data import load_data
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import numpy as np
@@ -17,8 +19,8 @@ DATA_PATH = CURRENT_PATH + '/data'
 def main():
     epochs = 10
     #x, y = load_data(DATA_PATH, verbose=False, num_samples=5)
-    x = np.load('preprocessing/X.npz')['x']
-    y = np.load('preprocessing/y.npz')['y']
+    x = np.load('/global/scratch/alex_vlissidis/X.npz')['x']
+    y = np.load('/global/scratch/alex_vlissidis/y.npz')['y']
 
     print("training data shapes:", x.shape, y.shape)
     
@@ -30,12 +32,10 @@ def main():
     model = Cnn(x.shape[1:], y.shape[1])
     model.build()
 
-
-
     history = model.train(x_train, y_train, epochs=epochs)
 
     print("Saving model...")
-    model.model.save('model.h5') 
+    model.model.save('models/model-adadelta.h5') 
 
     print("Plotting...")
     f, (ax1, ax2) = plt.subplots(2, 1)
@@ -48,7 +48,7 @@ def main():
     ax1.legend()
     ax2.legend()
 
-    f.savefig('training.png', dpi=300)
+    f.savefig('figures/training-adadelta.png', dpi=300)
     print("Done.")
 
 
