@@ -1,4 +1,5 @@
 from preprocessing.data_lstm import read_data_for_speaker
+from lstm_utils.callbacks import Statistics
 import matplotlib.pyplot as plt
 import os
 import numpy as np
@@ -86,11 +87,15 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
 
     adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
+
+    stats = Statistics(model, x_train, y_train, input_len_train,
+                        label_len_train, num_samples_stats=256, output_dir='lstm_model/results')
     history = model.fit(x = {'the_input':x_train, 'the_labels':y_train, 'label_length':label_len_train,
                              'input_length':input_len_train}, y = {'ctc': np.zeros([x_train.shape[0]])},
                         batch_size=batch_size,
                         epochs=epochs,
                         validation_split=val_train_ratio,
+                        callbacks = [stats],
                         shuffle=True,
                         verbose=1)
 
