@@ -5,7 +5,7 @@ import editdistance
 import csv
 import os
 from spell import Spell
-
+CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 def labels_to_text(labels):
     # 26 is space, 27 is CTC blank char
     text = ''
@@ -45,7 +45,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
                            greedy=greedy, beam_width=beam_width, top_paths=top_paths)
     paths = [path.eval(session=K.get_session()) for path in decoded[0]]
     #logprobs  = decoded[1].eval(session=K.get_session())
-    spell = Spell(path='grid.txt')
+    spell = Spell(path=CURRENT_PATH+"grid.txt")
     preprocessed = [labels_to_text, spell.sentence]
     for output in paths[0]:
         out = output
