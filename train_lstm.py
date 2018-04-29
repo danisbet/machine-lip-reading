@@ -139,9 +139,9 @@ def pad_input(x, max_str_len):
     return np.concatenate((x,padding),axis = 1)
 
 def main():
-    epochs = 1000
+    epochs = 2000
     max_str_len = 20
-    for count in range(1,6):
+    for count in range(1,5):
         start = time.time()
         print("loading data")
         x, y, label_len, input_len = read_data_for_speaker("s1", count)
