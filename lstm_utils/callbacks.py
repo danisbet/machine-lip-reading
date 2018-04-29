@@ -87,7 +87,7 @@ class Statistics(keras.callbacks.Callback):
             y_pred= tf.constant(np.squeeze(y_pred))
             decoded_res = decode(y_pred, input_data['input_length'])
             for i in range(0, num_proc):
-                source_str.append(labels_to_text(int(self.y_train[i])))
+                source_str.append(labels_to_text(self.y_train[i].astype(int)))
             for j in range(0, num_proc):
                 data.append((decoded_res[j], source_str[j]))
 
