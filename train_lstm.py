@@ -62,7 +62,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     x_lstm = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'), merge_mode='concat')(input_lstm)
     x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
-    print "after dense1"
+    print("after dense1")
     y_pred = Activation('softmax', name='softmax')(x_lstm)
 
     labels = Input(name='the_labels', shape = [max_string_len], dtype='int32')
