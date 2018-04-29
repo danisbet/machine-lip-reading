@@ -100,7 +100,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                             y = np.stack(y_raw, axis=0)
 
                         x = np.stack(x_raw, axis=0)
-                        np.savez_compressed('data/s1_X_'+str(counter / num_samples), x=X)
+                        np.savez_compressed('data/s1_X_'+str(counter / num_samples), x=x)
                         np.savez_compressed('data/s1_y_'+str(counter / num_samples), y=y)
                         np.savez_compressed('data/s1_wi_'+str(counter / num_samples), word_length=word_length, input_length=input_length)
                         x_raw = []
