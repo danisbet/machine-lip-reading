@@ -5,6 +5,7 @@ from video import read_video
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 import re
 
+# CURRENT_PATH = '/home/ubuntu/assignments/machine-lip-reading/preprocessing'
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/../data'
 PREDICTOR_PATH = CURRENT_PATH + '/shape_predictor_68_face_landmarks.dat'
@@ -60,9 +61,8 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                     if word == 'sil' or word == 'sp':
                         continue
                     
-                    _, d1, d2, d3 = video[start:stop].shape
-                    
                     if (len(x_raw) > 0):
+                        _, d1, d2, d3 = video[start:stop].shape
                         _, prev_d1, prev_d2, prev_d3 = x_raw[-1].shape
                         if (d1, d2, d3) != (prev_d1, prev_d2, prev_d3):
                             if verbose is True:
@@ -173,49 +173,44 @@ def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, c
     
     if not ctc_encoding:
         y_raw = le.fit_transform(y_raw)
-        y_raw = oh.fit_transform(y_raw.reshape(-1, 1)).todense()
+        y = oh.fit_transform(y_raw.reshape(-1, 1)).todense()
 
 
     for i in range(len(x_raw)):
         result = np.zeros((max_len, x_raw[i].shape[1], x_raw[i].shape[2], x_raw[i].shape[3]))
         result[:x_raw[i].shape[0], :x_raw[i].shape[1], :x_raw[i].shape[2], :x_raw[i].shape[3]] = x_raw[i]
         x_raw[i] = result
-             
+
         if ctc_encoding:
             res = np.ones(max_word_len) * -1
             enc = np.array(text_to_labels(y_raw[i]))
             res[:enc.shape[0]] = enc
             y_raw[i] = res
-    
+        
     if ctc_encoding:
-        y_raw = np.stack(y_raw, axis=0)
+        y = np.stack(y_raw, axis=0)
 
-    x_raw = np.stack(x_raw, axis=0)
-    
-    np_save = SAVE_NUMPY_PATH + "/" + speaker_id
-    np.savez_compressed("x", x_raw) 
-    np.savez_compressed("y", y_raw)
-    np.savez_compressed("word_len_list", np.array(word_len_list))
-    np.savez_compressed("input_len_list", np.array(input_len_list))
+    x = np.stack(x_raw, axis=0)
 
-    return speaker_id
+#     np.savez_compressed('data/' + speaker_id + '_X', x=X)
+#     np.savez_compressed('data/' + speaker_id + '_y', y=y)
+#     np.savez_compressed('data/' + speaker_id + '_wi', word_length = word_length, input_length = input_length)
+    return x, y, np.array(word_len_list), np.array(input_len_list), speaker_id
 
 def read_data_for_speaker(speaker_id):
-    x_raw = np.load("x.npz")['x']
-#     x_raw = np.stack(x_raw, axis=0)
-    y_raw = np.load("y.npz")['y']
-    word_len_list = np.load("word_len_list.npz")['word_len']
-    input_len_list = np.load("input_len_list.npz")['input_len']
+    x_raw = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_x.npy")
+    x_raw = np.stack(x_raw, axis=0)
+    y_raw = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_y.npy")
+    word_len_list = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_word_len_list.npy")
+    input_len_list = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_input_len_list.npy")
     return x_raw, y_raw, word_len_list, input_len_list
 
 
 if __name__ == "__main__":
-    X, y, word_length, input_length = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=-1)
+    X, y, word_length, input_length, speaker_id = load_data_for_speaker(DATA_PATH, 's1', verbose=True, ctc_encoding=True, num_samples=-1)
     print("X:", X.shape)
     print("y:", y.shape)
 
-    np.savez_compressed('data/s1_X', x=X)
-    np.savez_compressed('data/s1_y', y=y)
-    np.savez_compressed('data/s1_wi', word_length = word_length, input_length = input_length)
-
-
+    np.savez_compressed('data/' + speaker_id + '_X', x=X)
+    np.savez_compressed('data/' + speaker_id + '_y', y=y)
+    np.savez_compressed('data/' + speaker_id + '_wi', word_length = word_length, input_length = input_length)
