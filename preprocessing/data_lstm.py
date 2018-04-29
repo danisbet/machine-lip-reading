@@ -52,7 +52,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
         for name in files:
             if '.mpg' in name:
                 if verbose is True:
-                    #print("reading: " + root + "/" + name)
+                    print("reading: " + root + "/" + name)
 
                 video = read_video(os.path.join(root, name), PREDICTOR_PATH)
                 alignments = read_align(os.path.join(root, '../align/', name.split(".")[0] + ".align"))
@@ -114,7 +114,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
 
 if __name__ == "__main__":
-    load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=15)
+    load_data(DATA_PATH, verbose=False, ctc_encoding=True, num_samples=15)
     print("X:", X.shape)
     print("y:", y.shape)
 
