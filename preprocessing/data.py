@@ -205,7 +205,12 @@ def read_data_for_speaker(speaker_id):
 
 
 if __name__ == "__main__":
-    X, y = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=15)
+    X, y, word_length, input_length = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=15)
     print("X:", X.shape)
     print("y:", y.shape)
-    print(y)
+
+    np.savez_compressed('X', x=X)
+    np.savez_compressed('y', y=y)
+    np.savez_compressed('wi', word_length = word_length, input_length = input_length)
+
+
