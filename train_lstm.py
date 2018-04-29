@@ -128,8 +128,14 @@ def read_data():
 
     return x, y
 
+def pad_input(x, max_str_len):
+    # pad on axis = 1
+    padding = np.zeros((x.shape[0],max_str_len - x.shape[1],x.shape[0],x.shape[0],x.shape[0]))
+    return np.concatenate((x,padding),axis = 1)
+
 def main():
     epochs = 100
+    max_str_len = 20
     for count in range(1,6):
         start = time.time()
         print("loading data")
@@ -137,6 +143,7 @@ def main():
         end = time.time()
         print("load data took", end-start)
         print("training data shapes:", x.shape, y.shape)
+        x = pad_input(x, max_str_len)
         x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
         input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
         if count == 1:
