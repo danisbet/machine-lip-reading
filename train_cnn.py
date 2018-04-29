@@ -13,8 +13,6 @@ from keras.layers.pooling import MaxPooling3D
 from keras.layers.core import Dense, Dropout, Flatten, Reshape
 from keras.layers import Input
 from keras import optimizers
-
-
 from keras import backend as K
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))

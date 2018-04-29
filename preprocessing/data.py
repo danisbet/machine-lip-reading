@@ -112,6 +112,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
     x = np.stack(x_raw, axis=0)
     return x, y, np.array(word_len_list), np.array(input_len_list)
 
+
 def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, ctc_encoding=False):
     oh = OneHotEncoder()
     le = LabelEncoder()
@@ -209,7 +210,12 @@ def read_data_for_speaker(speaker_id):
 
 
 if __name__ == "__main__":
-    X, y = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=15)
+    X, y, word_length, input_length = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=-1)
     print("X:", X.shape)
     print("y:", y.shape)
-    print(y)
+
+    np.savez_compressed('data/s1_X', x=X)
+    np.savez_compressed('data/s1_y', y=y)
+    np.savez_compressed('data/s1_wi', word_length = word_length, input_length = input_length)
+
+
