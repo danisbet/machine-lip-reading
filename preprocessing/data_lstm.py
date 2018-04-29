@@ -100,12 +100,14 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
                         x = np.stack(x, axis=0)
 
                         print('saving numpy')
-                        np.savez_compressed(str(speaker) + '_x_' + str(counter / num_samples), x=x)
-                        np.savez_compressed(str(speaker) + '_y_' + str(counter / num_samples), y=y)
-                        np.savez_compressed(str(speaker) + '_wi_' + str(counter / num_samples),
+                        np.savez_compressed(speaker + '_x_' + str(counter / num_samples), x=x)
+                        np.savez_compressed(speaker + '_y_' + str(counter / num_samples), y=y)
+                        np.savez_compressed(speaker + '_wi_' + str(counter / num_samples),
                                             word_length=word_len_list, input_length=input_len_list)
                         
-
+                        if counter == num_samples:
+                            return counter / num_samples
+                        
                         max_len = 0
                         max_word_len = 0
 
@@ -115,7 +117,35 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
                         word_len_list = []
                         input_len_list = []
     
-    return counter / num_samples
+    
+    if not ctc_encoding:
+        y = le.fit_transform(y)
+        y = oh.fit_transform(y.reshape(-1, 1)).todense()
+
+    for i in range(len(x)):
+        result = np.zeros((max_len, 50, 100, 3))
+        result[:x[i].shape[0], :x[i].shape[1], :x[i].shape[2], :x[i].shape[3]] = x[i]
+        x[i] = result
+
+        if ctc_encoding:
+            res = np.ones(max_word_len) * -1
+            enc = np.array(text_to_labels(y[i]))
+            res[:enc.shape[0]] = enc
+            y[i] = res
+
+    if ctc_encoding:
+        y = np.stack(y, axis=0)
+
+    x = np.stack(x, axis=0)
+
+    print('saving numpy')
+    np.savez_compressed(speaker + '_x_' + str(1 + counter / num_samples), x=x)
+    np.savez_compressed(speaker + '_y_' + str(1 + counter / num_samples), y=y)
+    np.savez_compressed(speaker + '_wi_' + str(1 + counter / num_samples),
+                        word_length=word_len_list, input_length=input_len_list)
+    
+    
+    return 1 + counter / num_samples
 
 def read_data_for_speaker(speaker_id, count):
     x = np.load(speaker_id + "_x_" + str(count) + ".npz")['x']
@@ -127,10 +157,4 @@ def read_data_for_speaker(speaker_id, count):
 
 if __name__ == "__main__":
     load_data(DATA_PATH, 's1')
-# =======
-#     load_data(DATA_PATH, verbose=False, ctc_encoding=True, num_samples=2000)
-#     print("X:", X.shape)
-#     print("y:", y.shape)
-# >>>>>>> b16548b8d8bff4ca2029b8a5bf4b1977bdd77320
-
 
