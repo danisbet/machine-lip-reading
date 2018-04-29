@@ -130,7 +130,7 @@ def read_data():
 
 def main():
     epochs = 100
-    for count in range(5):
+    for count in range(1,6):
         start = time.time()
         print("loading data")
         x, y, label_len, input_len = read_data_for_speaker("s1", count)
