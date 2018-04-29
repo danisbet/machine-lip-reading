@@ -110,6 +110,33 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                         word_len_list = []
                         input_len_list = []
 
+
+    if not ctc_encoding:
+        y_raw = le.fit_transform(y_raw)
+        y = oh.fit_transform(y_raw.reshape(-1, 1)).todense()
+
+    for i in range(len(x_raw)):
+        result = np.zeros((max_len, x_raw[i].shape[1], x_raw[i].shape[2], x_raw[i].shape[3]))
+        result[:x_raw[i].shape[0], :x_raw[i].shape[1], :x_raw[i].shape[2], :x_raw[i].shape[3]] = \
+            x_raw[i]
+        x_raw[i] = result
+
+        if ctc_encoding:
+            res = np.ones(max_word_len) * -1
+            enc = np.array(text_to_labels(y_raw[i]))
+            res[:enc.shape[0]] = enc
+            y_raw[i] = res
+
+    if ctc_encoding:
+        y = np.stack(y_raw, axis=0)
+
+    x = np.stack(x_raw, axis=0)
+    np.savez_compressed('data/s1_X_' + str(counter / num_samples), x=x)
+    np.savez_compressed('data/s1_y_' + str(counter / num_samples), y=y)
+    np.savez_compressed('data/s1_wi_' + str(counter / num_samples), word_length=np.array(word_len_list),
+                        input_length=np.array(input_len_list))
+    print ('successfully saving the last %d words' % (len(input_len_list)))
+
     return None
 
 
