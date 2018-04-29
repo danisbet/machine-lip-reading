@@ -195,11 +195,10 @@ def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, c
     np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_x', x=x)
     np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_y', y=y)
     np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_wi', word_length=word_len_list, input_length=input_len_list)
-    return speaker_id
+#     return speaker_id
 
 def read_data_for_speaker(speaker_id):
     x = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_x.npz")['x']
-#     x_raw = np.stack(x_raw, axis=0)
     y = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_y.npz")['y']
     word_len = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_wi.npz")['word_length']
     input_len = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_wi.npz")['input_length']
@@ -207,10 +206,10 @@ def read_data_for_speaker(speaker_id):
 
 
 if __name__ == "__main__":
-    X, y, word_length, input_length, speaker_id = load_data_for_speaker(DATA_PATH, 's1', verbose=True, ctc_encoding=True, num_samples=-1)
+    X, y, word_length, input_length = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=-1)
     print("X:", X.shape)
     print("y:", y.shape)
 
-    np.savez_compressed('data/' + speaker_id + '_X', x=X)
-    np.savez_compressed('data/' + speaker_id + '_y', y=y)
-    np.savez_compressed('data/' + speaker_id + '_wi', word_length = word_length, input_length = input_length)
+    np.savez_compressed('data/s1_X', x=X)
+    np.savez_compressed('data/s1_y', y=y)
+    np.savez_compressed('data/s1_wi', word_length = word_length, input_length = input_length)
