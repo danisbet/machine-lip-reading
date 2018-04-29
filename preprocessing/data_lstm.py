@@ -104,7 +104,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                         np.savez_compressed('data/s1_y_'+str(counter / num_samples), y=y)
                         np.savez_compressed('data/s1_wi_'+str(counter / num_samples), word_length=np.array(word_len_list),
                                             input_length=np.array(input_len_list))
-                        print ('successfully saved the %d th %d data'%(counter / num_samples, num_samples))
+                        print ('successfully saving the %d th %d words'%(counter / num_samples, num_samples))
                         x_raw = []
                         y_raw = []
                         word_len_list = []
@@ -114,7 +114,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
 
 if __name__ == "__main__":
-    load_data(DATA_PATH, verbose=False, ctc_encoding=True, num_samples=15)
+    load_data(DATA_PATH, verbose=False, ctc_encoding=True, num_samples=5000)
     print("X:", X.shape)
     print("y:", y.shape)
 
