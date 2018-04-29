@@ -5,7 +5,7 @@ import editdistance
 import csv
 import os
 from spell import Spell
-
+CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 def labels_to_text(labels):
     # 26 is space, 27 is CTC blank char
     text = ''
@@ -45,11 +45,12 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
                            greedy=greedy, beam_width=beam_width, top_paths=top_paths)
     paths = [path.eval(session=K.get_session()) for path in decoded[0]]
     #logprobs  = decoded[1].eval(session=K.get_session())
-    spell = Spell(path='grid.txt')
-    preprocessed = [labels_to_text, spell.sentence]
+    spell = Spell(path=CURRENT_PATH+"/grid.txt")
+    preprocessed = []
+    postprocessors=[labels_to_text, spell.sentence]
     for output in paths[0]:
         out = output
-        for postprocessor in self.postprocessors:
+        for postprocessor in postprocessors:
             out = postprocessor(out)
         preprocessed.append(out)
 
@@ -70,6 +71,7 @@ class Statistics(keras.callbacks.Callback):
 
 
     def get_statistics(self, num):
+        import tensorflow as tf
         num_left = num
         data = []
         source_str = []
@@ -78,25 +80,41 @@ class Statistics(keras.callbacks.Callback):
             num_proc = min(self.x_train.shape[0], num_left)
             input_data = {'the_input': self.x_train[0:num_proc], 'the_labels': self.y_train[0:num_proc],
              'label_length': self.label_len_train[0:num_proc], 'input_length': self.input_len_train[0:num_proc]}
-            y_pred = self.model.get_layer('ctc').input[0]
-            y_pred = property(K.function([input_data, K.learning_phase()],[y_pred, K.learning_phase()]))([input_data, 0])[0]
+            output_layer = self.model.get_layer('ctc').input[0]
+            input_layer = self.model.get_layer('padding1').input
+            fn = K.function([input_layer],[output_layer])
+            y_pred = fn([input_data['the_input']])
+            y_pred= tf.constant(np.squeeze(y_pred))
             decoded_res = decode(y_pred, input_data['input_length'])
+
             for i in range(0, num_proc):
-                source_str.append(labels_to_text(self.y_train[i]))
+                source_str.append(labels_to_text(self.y_train[i].astype(int)))
+
             for j in range(0, num_proc):
                 data.append((decoded_res[j], source_str[j]))
+                #if j == 0:
+                    #print("predicted word:", decoded_res[j])
+                    #print("source word:", source_str[j])
 
             num_left -= num_proc
 
         mean_cer, mean_cer_norm    = self.get_mean_character_error_rate(data)
-        mean_wer, mean_wer_norm    = self.get_mean_word_error_rate(data)
+        #mean_wer, mean_wer_norm    = self.get_mean_word_error_rate(data)
 
         return {
             'samples': num,
             'cer': (mean_cer, mean_cer_norm),
-            'wer': (mean_wer, mean_wer_norm),
         }
 
+    def get_mean_tuples(self, data, individual_length, func):
+        total = 0.0
+        total_norm = 0.0
+        length = len(data)
+        for i in range(0, length):
+            val = float(func(data[i][0], data[i][1]))
+            total += val
+            total_norm += val / individual_length
+        return (total / length, total_norm / length)
     def get_mean_character_error_rate(self, data):
         mean_individual_length = np.mean([len(pair[1]) for pair in data])
         return self.get_mean_tuples(data, mean_individual_length, editdistance.eval)
@@ -110,9 +128,9 @@ class Statistics(keras.callbacks.Callback):
         with open(os.path.join(self.output_dir, 'stats.csv'), 'wb') as csvfile:
             csvw = csv.writer(csvfile)
             csvw.writerow(
-                ["Epoch", "Samples", "Mean CER", "Mean CER (Norm)", "Mean WER", "Mean WER (Norm)"])
+                ["Epoch", "Samples", "Mean CER", "Mean CER (Norm)"])
 
     def on_epoch_end(self, epoch, logs={}):
         stats = self.get_statistics(self.num_sample_stats)
-        print('\n\n[Epoch %d] Out of %d samples: [CER: %.3f - %.3f] [WER: %.3f - %.3f] \n'
-              % (epoch, stats['samples'], stats['cer'][0], stats['cer'][1], stats['wer'][0], stats['wer'][1]))
+        print('\n\n[Epoch %d] Out of %d samples: [CER: %.3f - %.3f] \n'
+              % (epoch, stats['samples'], stats['cer'][0], stats['cer'][1]))

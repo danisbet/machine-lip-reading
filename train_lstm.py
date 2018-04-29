@@ -45,9 +45,9 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     x = ZeroPadding3D(padding=(0,2,2), name='padding1')(input_data)
     x = TimeDistributed(Conv2D(filters = 32, kernel_size = 5, strides = (2,2),
                              padding = 'same', activation = 'relu'))(x)
-    print
-    x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
-    x = Dropout(0.5)(x)
+
+    #x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
+    #x = Dropout(0.5)(x)
 
     x = TimeDistributed(Conv2D(filters=32, kernel_size=5, strides=(2, 2),
                                padding='same', activation='relu'))(x)
@@ -56,8 +56,8 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     x = TimeDistributed(Conv2D(filters=4, kernel_size=5, strides=(2, 2),
                                padding='same', activation='relu'))(x)
-    x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
-    x = Dropout(0.5)(x)
+    #x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
+    #x = Dropout(0.5)(x)
 
     input_lstm = TimeDistributed(Flatten())(x)
 
@@ -139,9 +139,9 @@ def pad_input(x, max_str_len):
     return np.concatenate((x,padding),axis = 1)
 
 def main():
-    epochs = 100
+    epochs = 2000
     max_str_len = 20
-    for count in range(1,6):
+    for count in range(1,5):
         start = time.time()
         print("loading data")
         x, y, label_len, input_len = read_data_for_speaker("s1", count)
