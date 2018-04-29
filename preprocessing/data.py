@@ -192,9 +192,9 @@ def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, c
 
     x = np.stack(x_raw, axis=0)
 
-#     np.savez_compressed('data/' + speaker_id + '_X', x=X)
-#     np.savez_compressed('data/' + speaker_id + '_y', y=y)
-#     np.savez_compressed('data/' + speaker_id + '_wi', word_length = word_length, input_length = input_length)
+    np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_x', x=x)
+    np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_y', y=y)
+    np.savez_compressed(SAVE_NUMPY_PATH + '/' + speaker_id + '_wi', word_length=word_len_list, input_length=input_len_list)
     return x, y, np.array(word_len_list), np.array(input_len_list), speaker_id
 
 def read_data_for_speaker(speaker_id):
