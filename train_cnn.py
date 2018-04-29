@@ -2,6 +2,7 @@ from preprocessing.data import load_data
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+import pickle
 
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from sklearn.model_selection import train_test_split
@@ -84,11 +85,14 @@ def train(model, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0
 
 def main():
     epochs = 10
-    x, y = load_data(DATA_PATH, verbose=False, num_samples=5)
+    #x, y = load_data(DATA_PATH, verbose=False, num_samples=5)
+    x = np.load('preprocessing/X.npz')['x']
+    y = np.load('preprocessing/y.npz')['y']
 
     print("training data shapes:", x.shape, y.shape)
     
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+
     print("building model...")
     model = build_model(x.shape[1:], y.shape[1:])
     return
