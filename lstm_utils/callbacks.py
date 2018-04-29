@@ -46,10 +46,11 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     paths = [path.eval(session=K.get_session()) for path in decoded[0]]
     #logprobs  = decoded[1].eval(session=K.get_session())
     spell = Spell(path=CURRENT_PATH+"/grid.txt")
-    preprocessed = [labels_to_text, spell.sentence]
+    preprocessed = []
+    postprocessors=[labels_to_text, spell.sentence]
     for output in paths[0]:
         out = output
-        for postprocessor in self.postprocessors:
+        for postprocessor in postprocessors:
             out = postprocessor(out)
         preprocessed.append(out)
 
