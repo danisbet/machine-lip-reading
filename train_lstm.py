@@ -1,4 +1,4 @@
-from preprocessing.data import load_data
+from preprocessing.data import read_data_for_speaker
 import matplotlib.pyplot as plt
 import os
 import numpy as np
