@@ -113,6 +113,6 @@ class Statistics(keras.callbacks.Callback):
                 ["Epoch", "Samples", "Mean CER", "Mean CER (Norm)", "Mean WER", "Mean WER (Norm)"])
 
     def on_epoch_end(self, epoch, logs={}):
-        stats = get_statistics(self, self.num_sample_stats)
+        stats = self.get_statistics(self, self.num_sample_stats)
         print('\n\n[Epoch %d] Out of %d samples: [CER: %.3f - %.3f] [WER: %.3f - %.3f] \n'
               % (epoch, stats['samples'], stats['cer'][0], stats['cer'][1], stats['wer'][0], stats['wer'][1]))
