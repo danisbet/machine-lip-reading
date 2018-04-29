@@ -38,8 +38,8 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
     max_len = 0
     max_word_len = 0
 
-    x_raw = list()
-    y_raw = list()
+    x = list()
+    y = list()
     for root, dirs, files in os.walk(datapath):
         for name in files:
             if '.mpg' in name:
@@ -49,12 +49,18 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
                 video = read_video(os.path.join(root, name), PREDICTOR_PATH)
                 alignments = read_align(os.path.join(root, '../align/', name.split(".")[0] + ".align"))
                 
+                if video.shape[1] > 50 or video.shape[2] > 100 or video.shape[3] > 3:
+                    continue
+
                 for start, stop, word in alignments:
                     if word == 'sil' or word == 'sp':
                         continue
-                    
-                    x_raw.append(video[start:stop])
-                    y_raw.append(word)
+                   
+                    if start < stop and stop < len(video):
+                        x.append(video[start:stop])
+                        y.append(word)
+                    else:
+                        continue
 
                     max_word_len = max(max_word_len, len(word))
                     max_len = max(max_len, stop-start)
@@ -69,29 +75,35 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
             break
     
     if not ctc_encoding:
-        y_raw = le.fit_transform(y_raw)
-        y = oh.fit_transform(y_raw.reshape(-1, 1)).todense()
+        print("Encoding y...")
+        y = le.fit_transform(y)
+        y = oh.fit_transform(y.reshape(-1, 1)).todense()
 
-    for i in range(len(x_raw)):
-        result = np.zeros((max_len, x_raw[i].shape[1], x_raw[i].shape[2], x_raw[i].shape[3]))
-        result[:x_raw[i].shape[0], :x_raw[i].shape[1], :x_raw[i].shape[2], :x_raw[i].shape[3]] = x_raw[i]
-        x_raw[i] = result
+    print("Formatting X...")
+    for i in range(len(x)):
+        result = np.zeros((max_len, 50, 100, 3))
+        result[:x[i].shape[0], :x[i].shape[1], :x[i].shape[2], :x[i].shape[3]] = x[i]
+        x[i] = result
 
         if ctc_encoding:
+            #print("Encoding y...")
             res = np.ones(max_word_len) * -1
-            enc = np.array(text_to_labels(y_raw[i]))
+            enc = np.array(text_to_labels(y[i]))
             res[:enc.shape[0]] = enc
-            y_raw[i] = res
+            y[i] = res
 
     if ctc_encoding:
-        y = np.stack(y_raw, axis=0)
+        print("Stacking y...")
+        y = np.stack(y, axis=0)
 
-    x = np.stack(x_raw, axis=0)
+    x = np.stack(x, axis=0)
     
     return x, y
 
 if __name__ == "__main__":
-    X, y = load_data(DATA_PATH, verbose=True, ctc_encoding=True, num_samples=15)
+    X, y = load_data(DATA_PATH, verbose=True, ctc_encoding=False, num_samples=-1)
     print("X:", X.shape)
     print("y:", y.shape)
-    print(y)
+    
+    np.savez_compressed('X', x=X)
+    np.savez_compressed('y', y=y)
