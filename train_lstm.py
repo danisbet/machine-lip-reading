@@ -130,7 +130,7 @@ def read_data():
 
 def pad_input(x, max_str_len):
     # pad on axis = 1
-    padding = np.zeros((x.shape[0],max_str_len - x.shape[1],x.shape[0],x.shape[0],x.shape[0]))
+    padding = np.zeros((x.shape[0],max_str_len - x.shape[1],x.shape[2],x.shape[3],x.shape[4]))
     return np.concatenate((x,padding),axis = 1)
 
 def main():
