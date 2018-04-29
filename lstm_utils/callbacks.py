@@ -92,9 +92,9 @@ class Statistics(keras.callbacks.Callback):
 
             for j in range(0, num_proc):
                 data.append((decoded_res[j], source_str[j]))
-                #if j == 0:
-                    #print("predicted word:", decoded_res[j])
-                    #print("source word:", source_str[j])
+            if num_left == num:
+                print("predicted word:", decoded_res[0])
+                print("source word:", source_str[0])
 
             num_left -= num_proc
 
