@@ -143,9 +143,9 @@ def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, c
                 for start, stop, word in alignments:
                     if word == 'sil' or word == 'sp':
                         continue
-                    _, d1, d2, d3 = video[start:stop].shape
                     
                     if (len(x_raw) > 0):
+                        _, d1, d2, d3 = video[start:stop].shape
                         _, prev_d1, prev_d2, prev_d3 = x_raw[-1].shape
                         if (d1, d2, d3) != (prev_d1, prev_d2, prev_d3):
                             if verbose is True:
@@ -172,7 +172,7 @@ def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, c
     
     if not ctc_encoding:
         y_raw = le.fit_transform(y_raw)
-        y = oh.fit_transform(y_raw.reshape(-1, 1)).todense()
+        y_raw = oh.fit_transform(y_raw.reshape(-1, 1)).todense()
 
 
     for i in range(len(x_raw)):
@@ -185,21 +185,26 @@ def load_data_for_speaker(datapath, speaker_id, verbose=False, num_samples=-1, c
             enc = np.array(text_to_labels(y_raw[i]))
             res[:enc.shape[0]] = enc
             y_raw[i] = res
-            
+    
+    if ctc_encoding:
+        y_raw = np.stack(y_raw, axis=0)
+
+    x_raw = np.stack(x_raw, axis=0)
+    
     np_save = SAVE_NUMPY_PATH + "/" + speaker_id
-    np.save(np_save + "_x", x_raw) 
-    np.save(np_save + "_y", y_raw)
-    np.save(np_save + "_word_len_list", np.array(word_len_list))
-    np.save(np_save + "_input_len_list", np.array(input_len_list))
+    np.savez_compressed("x", x_raw) 
+    np.savez_compressed("y", y_raw)
+    np.savez_compressed("word_len_list", np.array(word_len_list))
+    np.savez_compressed("input_len_list", np.array(input_len_list))
 
     return speaker_id
 
 def read_data_for_speaker(speaker_id):
-    x_raw = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_x.npy")
-    x_raw = np.stack(x_raw, axis=0)
-    y_raw = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_y.npy")
-    word_len_list = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_word_len_list.npy")
-    input_len_list = np.load(SAVE_NUMPY_PATH + "/" + speaker_id + "_input_len_list.npy")
+    x_raw = np.load("x.npz")['x']
+#     x_raw = np.stack(x_raw, axis=0)
+    y_raw = np.load("y.npz")['y']
+    word_len_list = np.load("word_len_list.npz")['word_len']
+    input_len_list = np.load("input_len_list.npz")['input_len']
     return x_raw, y_raw, word_len_list, input_len_list
 
 
