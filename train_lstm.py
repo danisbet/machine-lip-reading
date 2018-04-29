@@ -140,21 +140,31 @@ def pad_input(x, max_str_len):
 
 def main():
     epochs = 2000
-    max_str_len = 20
-    for count in range(1,5):
+    max_str_len = 25
+    
+    x_s = np.ndarray(shape=(1000, max_str_len, 50, 100, 3))
+    y_s = np.ndarray(shape=(1000, 6))
+    label_lens = np.ndarray(shape=(1000,))
+    input_lens = np.ndarray(shape=(1000,))
+    
+    for count in range(1, 7):
         start = time.time()
         print("loading data")
         x, y, label_len, input_len = read_data_for_speaker("s1", count)
+        print(x.shape, y.shape, label_len.shape, input_len.shape)
         end = time.time()
         print("load data took", end-start)
-        print("training data shapes:", x.shape, y.shape)
+#         print("training data shapes:", x.shape, y.shape)
         x = pad_input(x, max_str_len)
-        x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
-        input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
-        if count == 1:
-            model = build_model(x.shape[1:], 28, max_string_len=10)
-        history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
-
+        x_s += x
+        y_s += y
+        label_lens += label_len
+        input_lens += input_lens
+    
+    x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
+    input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
+    model = build_model(x.shape[1:], 28, max_string_len=10)
+    history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
     print("Finish Training...")
     model.save('model.h5')
 
