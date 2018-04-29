@@ -78,7 +78,7 @@ class Statistics(keras.callbacks.Callback):
             num_proc = min(self.x_train.shape[0], num_left)
             input_data = {'the_input': self.x_train[0:num_proc], 'the_labels': self.y_train[0:num_proc],
              'label_length': self.label_len_train[0:num_proc], 'input_length': self.input_len_train[0:num_proc]}
-            output_layer = self.model.get_layer('ctc').input[0][0:num_proc]
+            output_layer = self.model.get_layer('ctc').input[0]
             input_layer = self.model.layers[0].input
             fn = K.function([input_layer],[output_layer])
             y_pred = fn([input_data])
