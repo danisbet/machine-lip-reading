@@ -127,5 +127,10 @@ def read_data_for_speaker(speaker_id, count):
 
 if __name__ == "__main__":
     load_data(DATA_PATH, 's1')
+# =======
+#     load_data(DATA_PATH, verbose=False, ctc_encoding=True, num_samples=2000)
+#     print("X:", X.shape)
+#     print("y:", y.shape)
+# >>>>>>> b16548b8d8bff4ca2029b8a5bf4b1977bdd77320
 
 
