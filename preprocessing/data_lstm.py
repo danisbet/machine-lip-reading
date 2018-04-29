@@ -145,10 +145,10 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
     return 1 + counter / num_samples
 
 def read_data_for_speaker(speaker_id, count):
-    x = np.load(speaker_id + "_x" + count + ".npz")['x']
-    y = np.load(speaker_id + "_y" + count + ".npz")['y']
-    word_len = np.load(speaker_id + "_wi" + count + ".npz")['word_length']
-    input_len = np.load(speaker_id + "_wi" + count + ".npz")['input_length']
+    x = np.load(CURRENT_PATH + "/" + speaker_id + "_x" + str(count) + ".npz")['x']
+    y = np.load(CURRENT_PATH + "/" + speaker_id + "_y" + str(count) + ".npz")['y']
+    word_len = np.load(CURRENT_PATH + "/" + speaker_id + "_wi" + str(count) + ".npz")['word_length']
+    input_len = np.load(CURRENT_PATH + "/" + speaker_id + "_wi" + str(count) + ".npz")['input_length']
     return x, y, word_len, input_len
 
 
