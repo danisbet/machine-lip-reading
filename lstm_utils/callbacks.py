@@ -75,9 +75,9 @@ class Statistics(keras.callbacks.Callback):
         source_str = []
 
         while num_left > 0:
+            num_proc = min(x_train.shape[0], num_left)
             input_data = {'the_input': self.x_train[0:num_proc], 'the_labels': self.y_train[0:num_proc],
              'label_length': label_len_train[0:num_proc], 'input_length': input_len_train[0:num_proc]}
-            num_proc        = min(x_train.shape[0], num_left)
             y_pred = K.function([input_data, K.learning_phase()], [0])
             input_length    = self.input_length[0:num_proc]
             decoded_res     = decode(y_pred, input_length)
