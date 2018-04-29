@@ -141,7 +141,7 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
 
 if __name__ == "__main__":
-    load_data(DATA_PATH, verbose=False, ctc_encoding=True, num_samples=5000)
+    load_data(DATA_PATH, verbose=False, ctc_encoding=True, num_samples=2000)
     print("X:", X.shape)
     print("y:", y.shape)
 
