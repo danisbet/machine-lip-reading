@@ -130,22 +130,20 @@ def read_data():
 
 def main():
     epochs = 100
+    for count in range(5):
+        start = time.time()
+        print("loading data")
+        x, y, label_len, input_len = read_data_for_speaker("s1", count)
+        end = time.time()
+        print("load data took", end-start)
+        print("training data shapes:", x.shape, y.shape)
+        x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
+        input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
+        if count == 0:
+            model = build_model(x.shape[1:], 28, max_string_len=10)
+        history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
 
-    start = time.time()
-    print("loading data")
-    x, y, label_len, input_len= load_data(DATA_PATH, verbose=False, num_samples=100, ctc_encoding=True)
-    end = time.time()
-
-    print("load data took", end-start)
-    print("training data shapes:", x.shape, y.shape)
-    x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
-    input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
-
-    model = build_model(x.shape[1:], 28, max_string_len = 10)
-
-    history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
-
-    print("Saving model...")
+    print("Finish Training...")
     model.save('model.h5')
 
     # TODO: add visualization
