@@ -79,7 +79,7 @@ class Statistics(keras.callbacks.Callback):
             input_data = {'the_input': self.x_train[0:num_proc], 'the_labels': self.y_train[0:num_proc],
              'label_length': self.label_len_train[0:num_proc], 'input_length': self.input_len_train[0:num_proc]}
             y_pred = self.model.get_layer('ctc').input[0]
-            y_pred = K.function([input_data, K.learning_phase()],[y_pred, K.learning_phase()])\
+            y_pred = K.function([input_data, K.learning_phase()],[y_pred, K.learning_phase()])
             y_pred = y_pred.data.numpy()
             decoded_res = decode(y_pred, input_data['input_length'])
             for i in range(0, num_proc):
