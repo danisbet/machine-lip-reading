@@ -16,8 +16,8 @@ from keras.models import Model
 from keras.layers.wrappers import TimeDistributed, Bidirectional
 from keras.layers.recurrent import GRU,LSTM
 from keras.layers import Input
-from keras.layers.convolutional import ZeroPadding3D, Conv3D
-from keras.layers.pooling import MaxPooling3D
+from keras.layers.convolutional import ZeroPadding3D, Conv2D
+from keras.layers.pooling import MaxPooling2D
 from keras.layers.core import Lambda, Dropout, Flatten, Dense, Activation
 from keras.optimizers import Adam
 from keras import backend as K
