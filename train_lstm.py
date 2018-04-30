@@ -192,7 +192,7 @@ def pad_input(x, max_str_len):
     padding = np.zeros((x.shape[0],max_str_len - x.shape[1],x.shape[2],x.shape[3],x.shape[4]))
     return np.concatenate((x,padding),axis = 1)
 
-def main(arg):
+def main():
 
     ## add parser to initialize  start_epoch as well as learning rate
     parser = argparse.ArgumentParser(description=' CNN+GRU model for lip reading.')
