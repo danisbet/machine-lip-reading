@@ -48,7 +48,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
         max_ind = np.argmax(seq, axis = 1)
         max_ind = labels_to_text(max_ind)
         if len(max_ind) == 0:
-            print("I am seq", seq)
+            print("I am seq", seq.shape)
         str_list.append(max_ind)
     print("str_list",str_list)
     #print("input_length",input_length)
