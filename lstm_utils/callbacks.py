@@ -89,7 +89,7 @@ class Statistics(keras.callbacks.Callback):
 
             for i in range(0, num_proc):
                 source_str.append(labels_to_text(self.y_train[i].astype(int)))
-            for k in reversed(len(decoded_res)):
+            for k in reversed(range(len(decoded_res))):
                 data = []
                 for j in range(0, num_proc):
                     data.append((decoded_res[k][j], source_str[j]))
