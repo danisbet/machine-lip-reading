@@ -5,6 +5,7 @@ import os
 import numpy as np
 
 import time
+import datetime
 import argparse
 
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
@@ -129,7 +130,7 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
 
     if start_epoch > 0:
-        weight_file = os.path.join(CURRENT_PATH, 'model_lstm.h5')
+        weight_file = os.path.join(CURRENT_PATH, 'lstm_model/checkpoints', run_name , "weights{epoch:02d}.h5")
         model.load_weights(weight_file)
     ## callbacks when each epoch ends
     #  This will ouput character error rate which
@@ -137,7 +138,9 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     #  TODO: results file need to be implemented
     stats = Statistics(model, x_train, y_train, input_len_train,
                         label_len_train, num_samples_stats=256, output_dir='lstm_model/results')
-
+    ## TODO: add checkpoint
+    # checkpoint = Checkpoint(os.path.join('lstm_model/checkpoints', "weights{epoch:02d}.h5"),
+    #                         monitor='val_loss', save_weights_only=True, mode='auto', period=1)
     history = model.fit(x = {'the_input':x_train, 'the_labels':y_train, 'label_length':label_len_train,
                              'input_length':input_len_train}, y = {'ctc': np.zeros([x_train.shape[0]])},
                         batch_size=batch_size,
@@ -197,10 +200,11 @@ def main():
     ## add parser to initialize  start_epoch as well as learning rate
     parser = argparse.ArgumentParser(description=' CNN+GRU model for lip reading.')
     #parser.add_argument("-lr", default=0.00001, type=float, help="learning rate")
-    parser.add_argument("-se", dest ='start_epoch', default=0, type=int, help="start_epoch")
+    # parser.add_argument("-se", dest ='start_epoch', default=0, type=int, help="start_epoch")
     parser.add_argument("-sid", dest='speaker_id', default=1, type=int, help="speaker id")
     args = parser.parse_args()
-    start_epoch = args.start_epoch
+    # start_epoch = args.start_epoch
+    start_epoch = 0
     speaker_id = args.speaker_id
     speaker_name = 's'+str(speaker_id)
 
@@ -235,8 +239,9 @@ def main():
     input_len_train, input_len_test = train_test_split(x_s, y_s, label_lens, input_lens, test_size=0.2)
 
     # 28 is outout size
+    # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
     model = build_model(x.shape[1:], 28, max_string_len=10)
-    history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs, start_epoch = start_epoch )
+    history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs, start_epoch = start_epoch)
     
     print("Finish Training...")
     model.save('model_lstm.h5')

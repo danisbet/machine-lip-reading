@@ -48,7 +48,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     spell = Spell(path=CURRENT_PATH+"/grid.txt")
     preprocessed = []
     postprocessors=[labels_to_text, spell.sentence]
-    for output in paths[0]:
+    for output in paths[0:5]:
         out = output
         for postprocessor in postprocessors:
             out = postprocessor(out)
@@ -89,12 +89,13 @@ class Statistics(keras.callbacks.Callback):
 
             for i in range(0, num_proc):
                 source_str.append(labels_to_text(self.y_train[i].astype(int)))
+            for k in reversed(len(decoded_res)):
+                data = []
+                for j in range(0, num_proc):
+                    data.append((decoded_res[k][j], source_str[j]))
+                if num_left == num:
+                    print("predicted word, source word:", data)
 
-            for j in range(0, num_proc):
-                data.append((decoded_res[j], source_str[j]))
-            if num_left == num:
-                print("predicted word:", decoded_res[0])
-                print("source word:", source_str[0])
 
             num_left -= num_proc
 
