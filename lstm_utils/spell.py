@@ -67,7 +67,7 @@ class Spell(object):
     # Correct words
     def corrections(self, words):
         return [self.correction(word) for word in words]
-
     # Correct sentence
     def sentence(self, sentence):
         return untokenize(self.corrections(tokenize(sentence)))
+
