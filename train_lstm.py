@@ -71,9 +71,9 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 27, 52, 32)
     #  shape 2nd conv: (None, 20, 14, 26, 32)
-    x = TimeDistributed(Conv2D(filters = 32, kernel_size = 5, strides = (2,2),
+    x = TimeDistributed(Conv2D(filters = 64, kernel_size = 5, strides = (2,2),
                              padding = 'same', activation = 'relu'))(x)
-    x = TimeDistributed(Conv2D(filters=32, kernel_size=5, strides=(2, 2),
+    x = TimeDistributed(Conv2D(filters=64, kernel_size=5, strides=(2, 2),
                                padding='same', activation='relu'))(x)
 
     ## Max pool on each time sequence and Dropout
@@ -129,7 +129,7 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
 
-    adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    adam = Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
 
     if start_epoch > 0:
