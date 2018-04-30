@@ -53,6 +53,7 @@ def CTC(name, args):
     ######################################
     # return CTC loss as a labmda function
     ######################################
+    print ("I am labels", labels)
 	return Lambda(ctc_lambda_func, output_shape=(1,), name=name)(args)
 
 
