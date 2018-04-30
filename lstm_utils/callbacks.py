@@ -92,7 +92,7 @@ class Statistics(keras.callbacks.Callback):
             for k in reversed(range(len(decoded_res))):
                 data = []
                 for j in range(0, num_proc):
-                    data.append((decoded_res[k][j], source_str[j]))
+                    data.append((decoded_res[j][k], source_str[j]))
                 if num_left == num:
                     print("predicted word, source word:", data)
 
