@@ -48,23 +48,23 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
         max_ind = labels_to_text(max_ind)
         str_list.append(max_ind[0:int(input_length[i])])
     print(y_pred)
-    return str_list
+
     #
     # decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
     #                        greedy=greedy, beam_width=beam_width, top_paths=top_paths)
     # paths = [path.eval(session=K.get_session()) for path in decoded[0]]
     # print ("I am paths\n", paths)
     # #logprobs  = decoded[1].eval(session=K.get_session())
-    # spell = Spell(path=CURRENT_PATH+"/dictionary.txt")
-    # preprocessed = []
-    # postprocessors=[labels_to_text, spell.correction]
-    # for output in paths[0]:
-    #     out = output
-    #     for postprocessor in postprocessors:
-    #         out = postprocessor(out)
-    #     preprocessed.append(out)
+    spell = Spell(path=CURRENT_PATH+"/dictionary.txt")
+    preprocessed = []
+    postprocessors=[spell.correction]
+    for output in str_list:
+        out = output
+        for postprocessor in postprocessors:
+            out = postprocessor(out)
+        preprocessed.append(out)
 
-    #return preprocessed
+    return preprocessed
 
 
 class Statistics(keras.callbacks.Callback):
