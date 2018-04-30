@@ -1,4 +1,5 @@
 from preprocessing.data_lstm import read_data_for_speaker
+from preprocessing.data_lstm import get_sil_image
 from lstm_utils.callbacks import Statistics
 import matplotlib.pyplot as plt
 import os
@@ -19,6 +20,7 @@ from keras.layers.convolutional import Conv2D, MaxPooling2D, ZeroPadding3D
 from keras.layers.core import Lambda, Dropout, Flatten, Dense, Activation
 from keras.optimizers import Adam
 from keras import backend as K
+
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/data'
@@ -193,7 +195,12 @@ def pad_input(x, max_str_len):
     #################
     # pad on axis = 1
     #################
-    padding = np.zeros((x.shape[0],max_str_len - x.shape[1],x.shape[2],x.shape[3],x.shape[4]))
+    sil_image = get_sil_image()
+    sil_image = [sil_image for _ in range(max_str_len - x.shape[1])]
+    sil_image = np.stack(sil_image, axis = 0)
+    padding = [sil_image for _ in range(x.shape[0])]
+    padding = np.stack(padding ,axis = 0)
+    #padding = np.zeros((x.shape[0],max_str_len - x.shape[1],x.shape[2],x.shape[3],x.shape[4]))
     return np.concatenate((x,padding),axis = 1)
 
 def main():

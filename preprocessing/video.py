@@ -3,6 +3,7 @@ import numpy as np
 from skvideo.io import vread
 from scipy.misc import imresize
 
+
 def read_video(path, face_predictor_path, verbose=False):
     if verbose:
         print("loading: " + path)

@@ -3,7 +3,7 @@ import os
 from align import read_align
 from video import read_video
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-
+from scipy.ndimage import imread
 # CURRENT_PATH = '/home/ubuntu/assignments/machine-lip-reading/preprocessing'
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/../data'
@@ -28,6 +28,11 @@ def labels_to_text(labels):
         elif c == 26:
             text += ' '
     return text
+
+def get_sil_image():
+    img_dir = os.path.join(DATA_PATH, 'sil_img.png')
+    sil_img = imread(img_dir)
+    return sil_img
 
 def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=True):
 
@@ -89,7 +94,8 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
                             y = oh.fit_transform(y.reshape(-1, 1)).todense()
 
                         for i in range(len(x)):
-                            result = np.zeros((max_len, 50, 100, 3))
+                            sil_image = get_sil_image()
+                            result = np.stack([sil_image for _ in range(max_len)] ,axis = 0)
                             result[:x[i].shape[0], :x[i].shape[1], :x[i].shape[2], :x[i].shape[3]] = x[i]
                             x[i] = result
 
@@ -142,5 +148,5 @@ def read_data_for_speaker(speaker_id, count):
 
 
 if __name__ == "__main__":
-    load_data(DATA_PATH, 's2')
+    load_data(DATA_PATH, 's1', num_samples = 50)
 
