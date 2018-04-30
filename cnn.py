@@ -21,19 +21,31 @@ class Cnn(object):
         Head One: A sequence of convolutions with size 3 temporally. This is currently the same as what lipnet implemented
         
         """
-        self.head1_zero1 = ZeroPadding3D(padding=(1,2,2), name='head1_zero1')(self.input_data)
-        self.head1_conv1 = Conv3D(32, (3,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1')(self.head1_zero1)
-        self.head1_maxp1 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head1_maxp1')(self.head1_conv1)
+        self.head1_zero1_1 = ZeroPadding3D(padding=(1,2,2), name='head1_zero1_1')(self.input_data)
+        self.head1_conv1_1 = Conv3D(32, (3,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1_1')(self.head1_zero1_1)
+        self.head1_zero1_2 = ZeroPadding3D(padding=(1,2,2), name='head1_zero1_2')(self.head1_conv1_1)
+        self.head1_conv1_2 = Conv3D(32, (3,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1_2')(self.head1_zero1_2)
+        self.head1_zero1_3 = ZeroPadding3D(padding=(1,2,2), name='head1_zero1_3')(self.head1_conv1_2)
+        self.head1_conv1_3 = Conv3D(32, (3,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1_3')(self.head1_zero1_3)
+        self.head1_maxp1 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head1_maxp1')(self.head1_conv1_3)
         self.head1_drop1 = Dropout(0.5)(self.head1_maxp1)
 
-        self.head1_zero2 = ZeroPadding3D(padding=(1,2,2), name='head1_zero2')(self.head1_drop1)
-        self.head1_conv2 = Conv3D(64, (3,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv2')(self.head1_zero2)
-        self.head1_maxp2 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head1_maxp2')(self.head1_conv2)
+        self.head1_zero2_1 = ZeroPadding3D(padding=(1,2,2), name='head1_zero2_1')(self.head1_drop1)
+        self.head1_conv2_1 = Conv3D(64, (3,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv2_1')(self.head1_zero2_1)
+        self.head1_zero2_2 = ZeroPadding3D(padding=(1,2,2), name='head1_zero2_2')(self.head1_conv2_1)
+        self.head1_conv2_2 = Conv3D(64, (3,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv2_2')(self.head1_zero2_2)
+        self.head1_zero2_3 = ZeroPadding3D(padding=(1,2,2), name='head1_zero2_3')(self.head1_conv2_2)
+        self.head1_conv2_3 = Conv3D(64, (3,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv2_3')(self.head1_zero2_3)
+        self.head1_maxp2 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head1_maxp2')(self.head1_conv2_3)
         self.head1_drop2 = Dropout(0.5)(self.head1_maxp2)
 
-        self.head1_zero3 = ZeroPadding3D(padding=(1,1,1), name='head1_zero3')(self.head1_drop2)
-        self.head1_conv3 = Conv3D(96, (3,3,3), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv3')(self.head1_zero3)
-        self.head1_maxp3 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head1_maxp3')(self.head1_conv3)
+        self.head1_zero3_1 = ZeroPadding3D(padding=(1,1,1), name='head1_zero3_1')(self.head1_drop2)
+        self.head1_conv3_1 = Conv3D(96, (3,3,3), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv3_1')(self.head1_zero3_1)
+        self.head1_zero3_2 = ZeroPadding3D(padding=(1,1,1), name='head1_zero3_2')(self.head1_conv3_1)
+        self.head1_conv3_2 = Conv3D(96, (3,3,3), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv3_2')(self.head1_zero3_2)
+        self.head1_zero3_3 = ZeroPadding3D(padding=(1,1,1), name='head1_zero3_3')(self.head1_conv3_2)
+        self.head1_conv3_3 = Conv3D(96, (3,3,3), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv3_3')(self.head1_zero3_3)
+        self.head1_maxp3 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head1_maxp3')(self.head1_conv3_3)
         self.head1_drop3 = Dropout(0.5)(self.head1_maxp3)
 
         self.head1_flat  = Flatten()(self.head1_drop3)
@@ -44,23 +56,23 @@ class Cnn(object):
         # Head Two: Consider larger temporal features, 
 
         # """
-        self.head2_zero1 = ZeroPadding3D(padding=(3,2,2), name='head2_zero1')(self.input_data)
-        self.head2_conv1 = Conv3D(16, (7,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head2_conv1')(self.head2_zero1)
-        self.head2_maxp1 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp1')(self.head2_conv1)
-        self.head2_drop1 = Dropout(0.5)(self.head2_maxp1)
+        # self.head2_zero1 = ZeroPadding3D(padding=(3,2,2), name='head2_zero1')(self.input_data)
+        # self.head2_conv1 = Conv3D(16, (7,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head2_conv1')(self.head2_zero1)
+        # self.head2_maxp1 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp1')(self.head2_conv1)
+        # self.head2_drop1 = Dropout(0.5)(self.head2_maxp1)
 
-        self.head2_zero2 = ZeroPadding3D(padding=(3,2,2), name='head2_zero2')(self.head2_drop1)
-        self.head2_conv2 = Conv3D(32, (7,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head2_conv2')(self.head2_zero2)
-        self.head2_maxp2 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp2')(self.head2_conv2)
-        self.head2_drop2 = Dropout(0.5)(self.head2_maxp2)
+        # self.head2_zero2 = ZeroPadding3D(padding=(3,2,2), name='head2_zero2')(self.head2_drop1)
+        # self.head2_conv2 = Conv3D(32, (7,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head2_conv2')(self.head2_zero2)
+        # self.head2_maxp2 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp2')(self.head2_conv2)
+        # self.head2_drop2 = Dropout(0.5)(self.head2_maxp2)
 
-        self.head2_zero3 = ZeroPadding3D(padding=(3,1,1), name='head2_zero3')(self.head2_drop2)
-        self.head2_conv3 = Conv3D(64, (7,3,3), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head2_conv3')(self.head2_zero3)
-        self.head2_maxp3 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp3')(self.head2_conv3)
-        self.head2_drop3 = Dropout(0.5)(self.head2_maxp3)
+        # self.head2_zero3 = ZeroPadding3D(padding=(3,1,1), name='head2_zero3')(self.head2_drop2)
+        # self.head2_conv3 = Conv3D(64, (7,3,3), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head2_conv3')(self.head2_zero3)
+        # self.head2_maxp3 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head2_maxp3')(self.head2_conv3)
+        # self.head2_drop3 = Dropout(0.5)(self.head2_maxp3)
 
-        self.head2_flat  = Flatten()(self.head1_drop3)
-        print('head2 finished')
+        # self.head2_flat  = Flatten()(self.head1_drop3)
+        # print('head2 finished')
 
 
         # """
@@ -68,17 +80,17 @@ class Cnn(object):
         # """
 
 
-        self.concat = concatenate([self.head1_flat, self.head2_flat], axis=1)
+        # self.concat = concatenate([self.head1_flat, self.head2_flat], axis=1)
         # temp_model = Model(input=self.input_data, output=self.concat)
         # temp_model.summary()
          # self.flat = Flatten()(self.concat)
-        self.predictions = Dense(self.output_size, activation='softmax', kernel_initializer='glorot_normal', name='dense1')(self.concat)
+        self.predictions = Dense(self.output_size, activation='softmax', kernel_initializer='glorot_normal', name='dense1')(self.head1_flat)
         
         model = Model(input=self.input_data, output=self.predictions)
         
         model.summary()
         
-        adam = optimizers.Adam(lr=.000008, decay=.005)
+        adam = optimizers.Adam(lr=.000008, decay=.001)
         model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
         print("model built")
 
