@@ -63,7 +63,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     ## input_size: placeholder in Keras
     #  shape: (None, seq_size = 20, height = 50, width = 100, channels = 3)
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
-    x = ZeroPadding3D(padding=(3, 5, 5), name='padding1', input_shape=(input_size))(input_data)
+    x = ZeroPadding3D(padding=(3, 5, 5), name='padding1')(input_data)
     x = Conv3D(filters=32, kernel_size=(3, 5, 5), strides=(1, 2, 2), activation='relu',
            kernel_initializer='he_normal', name='conv1')(x)
     x = MaxPooling3D(pool_size=(1, 2, 2), strides=(1, 2, 2), name='max1')(x)
@@ -245,7 +245,7 @@ def main():
     #for count in range(1, 5):
     # TODO: this should be walk through files in np_s*
     # range(1,5) is number of data 'npz'
-    for count in range(1, 6):
+    for count in range(1, 2):
         print("loading data for ", count)
         x, y, label_len, input_len = read_data_for_speaker(speaker_name, count)
         x = pad_input(x, max_seq_len)
