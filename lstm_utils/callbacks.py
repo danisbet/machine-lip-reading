@@ -44,7 +44,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
                            greedy=greedy, beam_width=beam_width, top_paths=top_paths)
     paths = [path.eval(session=K.get_session()) for path in decoded[0]]
-    print ("I am paths\n"paths)
+    print ("I am paths\n",paths)
     #logprobs  = decoded[1].eval(session=K.get_session())
     spell = Spell(path=CURRENT_PATH+"/dictionary.txt")
     preprocessed = []
