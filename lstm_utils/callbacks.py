@@ -42,6 +42,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
                 the log probability of each decoded sequence.
     """
     str_list = []
+    print("y_pred in decode", y_pred)
     for i, seq in enumerate(np.squeeze(y_pred)):
         max_ind = np.argmax(seq, axis = 1)
         max_ind = labels_to_text(max_ind)
