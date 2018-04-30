@@ -71,9 +71,9 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 27, 52, 32)
     #  shape 2nd conv: (None, 20, 14, 26, 32)
-    x = TimeDistributed(Conv2D(filters = 64, kernel_size = 5, strides = (2,2),
+    x = TimeDistributed(Conv2D(filters = 64, kernel_size = 5, kernel_initializer='he_normal', strides = (2,2),
                              padding = 'same', activation = 'relu'))(x)
-    x = TimeDistributed(Conv2D(filters=64, kernel_size=5, strides=(2, 2),
+    x = TimeDistributed(Conv2D(filters=64, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
                                padding='same', activation='relu'))(x)
 
     ## Max pool on each time sequence and Dropout
@@ -84,7 +84,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 4, 7, 4)
-    x = TimeDistributed(Conv2D(filters=4, kernel_size=5, strides=(2, 2),
+    x = TimeDistributed(Conv2D(filters=4, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
                                padding='same', activation='relu'))(x)
 
     ## Flatten to gru
