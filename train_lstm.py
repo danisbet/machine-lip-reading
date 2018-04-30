@@ -213,7 +213,7 @@ def main():
     if start_epoch >= epochs:
         print "start_epoch too large, should be smaller than 2000!"
 
-    max_seq_len = 15
+    max_seq_len = 20
     x_s = np.ndarray(shape=(0, max_seq_len, 50, 100, 3))
     y_s = np.ndarray(shape=(0, 6))
     label_lens = np.array([])
