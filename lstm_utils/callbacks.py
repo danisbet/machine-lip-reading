@@ -46,7 +46,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     for i, seq in enumerate(y_pred):
         max_ind = np.argmax(seq, axis = 1)
         max_ind = labels_to_text(max_ind)
-        ind_list.append(max_ind[0:input_length[i]])
+        ind_list.append(max_ind[0:int(input_length[i])])
     return ind_list
     #
     # decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
