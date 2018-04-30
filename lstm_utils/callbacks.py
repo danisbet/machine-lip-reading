@@ -42,8 +42,8 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
                 the log probability of each decoded sequence.
     """
     print(" I am at 44")
-    ind_list = []
-    for i, seq in enumerate(y_pred):
+    str_list = []
+    for i, seq in enumerate(np.squeeze(y_pred)):
         max_ind = np.argmax(seq, axis = 1)
         max_ind = labels_to_text(max_ind)
         str_list.append(max_ind[0:int(input_length[i])])
