@@ -142,5 +142,5 @@ def read_data_for_speaker(speaker_id, count):
 
 
 if __name__ == "__main__":
-    load_data(DATA_PATH, 's1')
+    load_data(DATA_PATH, 's2')
 
