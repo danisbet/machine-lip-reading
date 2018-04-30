@@ -45,7 +45,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     print("y_pred in decode", y_pred.shape)
     print("y_pred in decode", np.squeeze(y_pred).shape)
     for i, seq in enumerate(np.squeeze(y_pred)):
-        max_ind = np.argmax(seq, axis = 0)
+        max_ind = np.argmax(seq, axis = 1)
         print(max_ind)
         max_ind = labels_to_text(max_ind)
         str_list.append(max_ind)
