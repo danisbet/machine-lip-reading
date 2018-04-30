@@ -140,21 +140,34 @@ def pad_input(x, max_str_len):
 
 def main():
     epochs = 2000
-    max_str_len = 20
-    for count in range(1,5):
-        start = time.time()
-        print("loading data")
-        x, y, label_len, input_len = read_data_for_speaker("s1", count)
-        end = time.time()
-        print("load data took", end-start)
-        print("training data shapes:", x.shape, y.shape)
-        x = pad_input(x, max_str_len)
-        x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
-        input_len_train, input_len_test = train_test_split(x, y, label_len, input_len, test_size=0.2)
-        if count == 1:
-            model = build_model(x.shape[1:], 28, max_string_len=10)
-        history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
+    max_str_len = 25
+    x_s = np.ndarray(shape=(0, max_str_len, 50, 100, 3))
+    y_s = np.ndarray(shape=(0, 6))
+    label_lens = np.array([])
+    input_lens = np.array([])
 
+    start = time.time()
+    for count in range(1, 7):
+
+        print("loading data for ", count)
+        x, y, label_len, input_len = read_data_for_speaker("s1", count)
+        x = pad_input(x, max_str_len)
+    #     print(x.shape, y.shape, label_len.shape, input_len.shape)
+    #     print(x_s.shape, y_s.shape, len(label_lens), len(input_lens))
+        x_s = np.vstack((x, x_s))
+        y_s = np.vstack((y, y_s))
+        label_lens = np.concatenate([label_len, label_lens])
+        input_lens = np.concatenate([input_len, input_lens])
+
+    end = time.time()
+    print("load data took", end-start)
+
+    print(x_s.shape, y_s.shape)
+    x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
+    input_len_train, input_len_test = train_test_split(x_s, y_s, label_lens, input_lens, test_size=0.2)
+    model = build_model(x.shape[1:], 28, max_string_len=10)
+    history = train(model, x_train, y_train, label_len_train, input_len_train, epochs=epochs)
+    
     print("Finish Training...")
     model.save('model.h5')
 
