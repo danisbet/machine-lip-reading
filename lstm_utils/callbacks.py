@@ -47,6 +47,8 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     for i, seq in enumerate(np.squeeze(y_pred)):
         max_ind = np.argmax(seq, axis = 1)
         max_ind = labels_to_text(max_ind)
+        if len(max_ind) == 0:
+            print("I am seq", seq)
         str_list.append(max_ind)
     print("str_list",str_list)
     #print("input_length",input_length)
@@ -63,7 +65,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     for output in str_list:
         out_temp = list(set(output))
         out = ''
-        for i in range(len(out_temp)):
+        for i in reversed(range(len(out_temp))):
             out += out_temp[i]
         for postprocessor in postprocessors:
             out = postprocessor(out)
