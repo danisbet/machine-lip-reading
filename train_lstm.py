@@ -63,18 +63,19 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     ## input_size: placeholder in Keras
     #  shape: (None, seq_size = 20, height = 50, width = 100, channels = 3)
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
-    x = ZeroPadding3D(padding=(3, 2, 2), name='padding1', input_shape=(input_size))(input_data)
-    x = Conv3D(filters=32, kernel_size=(7, 5, 5), strides=(1, 2, 2), padding='valid', activation='relu',
-           kernel_initializer='glorot_normal', name='conv1')(x)
+    x = ZeroPadding3D(padding=(3, 5, 5), name='padding1', input_shape=(input_size))(input_data)
+    x = Conv3D(filters=32, kernel_size=(3, 5, 5), strides=(1, 2, 2), activation='relu',
+           kernel_initializer='he_normal', name='conv1')(x)
     x = MaxPooling3D(pool_size=(1, 2, 2), strides=(1, 2, 2), name='max1')(x)
     x = Dropout(0.5)(x)
 
-    x = ZeroPadding3D(padding=(2, 2, 2), name='padding2')(x)
-    x = Conv3D(32, (5, 5, 5), strides=(1, 1, 1), activation='relu', kernel_initializer='glorot_normal', name='conv2')(x)
+    x = ZeroPadding3D(padding=(1, 2, 2), name='padding2')(x)
+    x = Conv3D(64, (3, 5, 5), strides=(1, 1, 1), activation='relu', kernel_initializer='glorot_normal', name='conv2')(x)
+    x = MaxPooling3D(pool_size=(1, 2, 2), strides=(1, 2, 2), name='max2')(x)
     x = Dropout(0.5)(x)
 
-    x = ZeroPadding3D(padding=(1, 2, 2), name='padding3')(x)
-    x = Conv3D(64, (3, 5, 5), strides=(1, 1, 1), activation='relu', kernel_initializer='glorot_normal', name='conv3')(x)
+    x = ZeroPadding3D(padding=(1, 1, 1), name='padding3')(x)
+    x = Conv3D(96, (3, 3, 3), strides=(1, 1, 1), activation='relu', kernel_initializer='glorot_normal', name='conv3')(x)
     x = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='max3')(x)
     x = Dropout(0.5)(x)
     '''
