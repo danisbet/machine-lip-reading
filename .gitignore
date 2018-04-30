@@ -1,9 +1,11 @@
 vgg16/vgg16/
 data/
 preprocessing/venv/
+preprocessing/X.npz
+preprocessing/y.npz
 
 __pycache__/
 *.pyc
-
+*.h5
 *.swp
 .DS_Store
