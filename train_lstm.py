@@ -84,7 +84,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 4, 7, 4)
-    x = TimeDistributed(Conv2D(filters=4, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
+    x = TimeDistributed(Conv2D(filters=32, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
                                padding='same', activation='relu'))(x)
 
     ## Flatten to gru
@@ -93,9 +93,8 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     ## Bidirectional gru
     #  shape: (None, 20, 512)
-    x_lstm = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'), merge_mode='concat')(input_lstm)
-    x_lstm = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'),
-                           merge_mode='concat')(x_lstm)
+    x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm1')(input_lstm)
+    x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm2')(x_lstm)
     ## dense (512, 28) with softmax
     #  shape: (None, 20, 28)
     x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
