@@ -203,10 +203,11 @@ def main():
     start_epoch = args.start_epoch
     speaker_id = args.speaker_id
     speaker_name = 's'+str(speaker_id)
+
+    epochs = 2000
     if start_epoch >= epochs:
         print "start_epoch too large, should be smaller than 2000!"
 
-    epochs = 2000
     max_seq_len = 25
     x_s = np.ndarray(shape=(0, max_seq_len, 50, 100, 3))
     y_s = np.ndarray(shape=(0, 6))
