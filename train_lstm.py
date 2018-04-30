@@ -129,7 +129,7 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
 
-    adam = Adam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    adam = Adam(lr=0.2, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
 
     if start_epoch > 0:
