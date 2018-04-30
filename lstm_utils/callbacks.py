@@ -47,7 +47,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     #logprobs  = decoded[1].eval(session=K.get_session())
     spell = Spell(path=CURRENT_PATH+"/dictionary.txt")
     preprocessed = []
-    postprocessors=[labels_to_text, spell.sentence]
+    postprocessors=[labels_to_text, spell.correction]
     for output in paths[0]:
         out = output
         for postprocessor in postprocessors:
