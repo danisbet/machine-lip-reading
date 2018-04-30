@@ -249,7 +249,7 @@ def main():
     # 28 is outout size
     # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
     model = build_model(x.shape[1:], 28, max_string_len=10)
-    history = train(model, x_train, y_train, label_len_train, input_len_train, batch_size = 20, epochs=epochs, start_epoch = start_epoch)
+    history = train(model, x_train, y_train, label_len_train, input_len_train, batch_size = 100, epochs=epochs, start_epoch = start_epoch)
     
     print("Finish Training...")
     model.save('model_lstm.h5')
