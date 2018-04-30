@@ -30,6 +30,11 @@ def labels_to_text(labels):
     return text
 
 def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=True):
+
+    output_dir = DATA_PATH + '/' + speaker + '_np'
+    if output_dir is not None and not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     oh = OneHotEncoder()
     le = LabelEncoder()
 
@@ -100,9 +105,12 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
                         x = np.stack(x, axis=0)
 
                         print('saving numpy')
-                        np.savez_compressed(speaker + '_x' + str(counter / num_samples), x=x)
-                        np.savez_compressed(speaker + '_y' + str(counter / num_samples), y=y)
-                        np.savez_compressed(speaker + '_wi' + str(counter / num_samples),
+                        x_dir = os.path.join(output_dir, speaker + '_x_' + str(counter / num_samples))
+                        y_dir = os.path.join(output_dir, speaker + '_y_' + str(counter / num_samples))
+                        wi_dir = os.path.join(output_dir, speaker + '_wi_' + str(counter / num_samples))
+                        np.savez_compressed(x_dir, x=x)
+                        np.savez_compressed(y_dir, y=y)
+                        np.savez_compressed(wi_dir,
                                             word_length=word_len_list, input_length=input_len_list)
                   
                         max_len = 0
@@ -113,42 +121,23 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
 
                         word_len_list = []
                         input_len_list = []
-    
-    
-    if not ctc_encoding:
-        y = le.fit_transform(y)
-        y = oh.fit_transform(y.reshape(-1, 1)).todense()
 
-    for i in range(len(x)):
-        result = np.zeros((max_len, 50, 100, 3))
-        result[:x[i].shape[0], :x[i].shape[1], :x[i].shape[2], :x[i].shape[3]] = x[i]
-        x[i] = result
 
-        if ctc_encoding:
-            res = np.ones(max_word_len) * -1
-            enc = np.array(text_to_labels(y[i]))
-            res[:enc.shape[0]] = enc
-            y[i] = res
-
-    if ctc_encoding:
-        y = np.stack(y, axis=0)
-
-    x = np.stack(x, axis=0)
-
-    print('saving numpy')
-    np.savez_compressed(speaker + '_x' + str(1 + counter / num_samples), x=x)
-    np.savez_compressed(speaker + '_y' + str(1 + counter / num_samples), y=y)
-    np.savez_compressed(speaker + '_wi' + str(1 + counter / num_samples),
-                        word_length=word_len_list, input_length=input_len_list)
-    
-    
     return 1 + counter / num_samples
 
 def read_data_for_speaker(speaker_id, count):
-    x = np.load(CURRENT_PATH + "/" + speaker_id + "_x" + str(count) + ".npz")['x']
-    y = np.load(CURRENT_PATH + "/" + speaker_id + "_y" + str(count) + ".npz")['y']
-    word_len = np.load(CURRENT_PATH + "/" + speaker_id + "_wi" + str(count) + ".npz")['word_length']
-    input_len = np.load(CURRENT_PATH + "/" + speaker_id + "_wi" + str(count) + ".npz")['input_length']
+    data_dir = os.path.join(DATA_PATH, speaker_id + '_np')
+    x_dir = os.path.join(data_dir, speaker_id + "_x_" + str(count) + ".npz")
+    y_dir = os.path.join(data_dir, speaker_id + "_y_" + str(count) + ".npz")
+    wi_dir = os.path.join(data_dir, speaker_id + "_wi_" + str(count) + ".npz")
+    try:
+        x = np.load(x_dir)['x']
+        y = np.load(y_dir)['y']
+        word_len = np.load(wi_dir)['word_length']
+        input_len = np.load(wi_dir)['input_length']
+    except:
+        print "make sure save in /path_to_data/data/s*_np/"
+        raise
     return x, y, word_len, input_len
 
 
