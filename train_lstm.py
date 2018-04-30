@@ -63,6 +63,12 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     ## input_size: placeholder in Keras
     #  shape: (None, seq_size = 20, height = 50, width = 100, channels = 3)
+    if K.image_data_format() == 'channels_first':
+        input_size = (self.img_c, self.frames_n, self.img_w, self.img_h)
+    else:
+        input_size = (self.frames_n, self.img_w, self.img_h, self.img_c)
+
+    self.input_data = Input(name='the_input', shape=input_shape, dtype='float32')
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
     x = ZeroPadding3D(padding=(3, 5, 5), name='padding1')(input_data)
     x = Conv3D(filters=32, kernel_size=(3, 5, 5), strides=(1, 2, 2), activation='relu',
