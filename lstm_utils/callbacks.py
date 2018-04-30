@@ -61,7 +61,10 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     preprocessed = []
     postprocessors=[spell.correction]
     for output in str_list:
-        out = unique(output)
+        out_temp = list(set(output))
+        out = ''
+        for i in range(len(out_temp)):
+            out += out_temp[i]
         for postprocessor in postprocessors:
             out = postprocessor(out)
         preprocessed.append(out)
