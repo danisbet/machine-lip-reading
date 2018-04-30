@@ -41,13 +41,13 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
             Tensor `(top_paths, )` that contains
                 the log probability of each decoded sequence.
     """
-    print(" I am at 44")
     str_list = []
     for i, seq in enumerate(np.squeeze(y_pred)):
         max_ind = np.argmax(seq, axis = 1)
         max_ind = labels_to_text(max_ind)
         str_list.append(max_ind[0:int(input_length[i])])
-    print(y_pred)
+    print("str_list",str_list)
+    print("input_length",input_length)
 
     #
     # decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
@@ -63,7 +63,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
         for postprocessor in postprocessors:
             out = postprocessor(out)
         preprocessed.append(out)
-
+    print("preprocessed",preprocessed)
     return preprocessed
 
 
@@ -94,7 +94,7 @@ class Statistics(keras.callbacks.Callback):
             input_layer = self.model.get_layer('padding1').input
             fn = K.function([input_layer,K.learning_phase()],[output_layer,K.learning_phase()])
             y_pred = fn([input_data['the_input'],0])[0]
-            print ("I am y_pred", y_pred)
+            #print ("I am y_pred", y_pred)
 
             decoded_res = decode(y_pred, input_data['input_length'])
 
