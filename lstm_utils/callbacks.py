@@ -41,6 +41,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
             Tensor `(top_paths, )` that contains
                 the log probability of each decoded sequence.
     """
+    print(" I am at 44")
     decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
                            greedy=greedy, beam_width=beam_width, top_paths=top_paths)
     paths = [path.eval(session=K.get_session()) for path in decoded[0]]
