@@ -104,7 +104,7 @@ class Statistics(keras.callbacks.Callback):
             input_layer = self.model.get_layer('padding1').input
             fn = K.function([input_layer,K.learning_phase()],[output_layer,K.learning_phase()])
             y_pred = fn([input_data['the_input'],0])[0]
-            #print ("I am y_pred", y_pred)
+            print ("I am y_pred", y_pred.shape)
 
             decoded_res = decode(y_pred, input_data['input_length'])
 
