@@ -242,8 +242,7 @@ def main():
 
     epochs = 20
     if start_epoch >= epochs:
-        print "start_epoch too large, should be smaller than 2000!"
-
+        print("start_epoch too large, should be smaller than 2000!")
     max_seq_len = 25
     x_s = np.ndarray(shape=(0, max_seq_len, 50, 100, 3))
     y_s = np.ndarray(shape=(0, 6))
@@ -273,7 +272,7 @@ def main():
 
     # 28 is outout size
     # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
-    print x_train.shape
+    print(x_train.shape)
     model = build_model(x.shape[1:], 28, max_string_len=10)
 
     input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len

@@ -132,7 +132,7 @@ def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=Tr
     return 1 + counter / num_samples
 
 def read_data_for_speaker(speaker_id, count):
-    data_dir = os.path.join(DATA_PATH, speaker_id + '_np')
+    data_dir = os.path.join("/global/scratch/alex_vlissidis/lipreading_data/", speaker_id + '_np')
     x_dir = os.path.join(data_dir, speaker_id + "_x_" + str(count) + ".npz")
     y_dir = os.path.join(data_dir, speaker_id + "_y_" + str(count) + ".npz")
     wi_dir = os.path.join(data_dir, speaker_id + "_wi_" + str(count) + ".npz")
@@ -142,7 +142,7 @@ def read_data_for_speaker(speaker_id, count):
         word_len = np.load(wi_dir)['word_length']
         input_len = np.load(wi_dir)['input_length']
     except:
-        print "make sure save in /path_to_data/data/s*_np/"
+        print("make sure save in /path_to_data/data/s*_np/")
         raise
     return x, y, word_len, input_len
 
