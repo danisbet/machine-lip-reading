@@ -42,10 +42,9 @@ def ctc_lambda_func(args):
     # label_length = K.cast(tf.squeeze(label_length),'int32')
     # input_length = K.cast(tf.squeeze(input_length),'int32')
     # labels = K.ctc_label_dense_to_sparse(labels, label_length)
-    print ("I am labels",labels)
     # return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
     #                      ignore_longer_outputs_than_inputs=True, time_major=False)
-    y_pred = y_pred[:, :, :]
+    y_pred = y_pred[:, 2:, :]
     return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
 
