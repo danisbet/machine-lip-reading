@@ -72,7 +72,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     #self.input_data = Input(name='the_input', shape=input_size, dtype='float32')
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
-
+    '''
     x = ZeroPadding3D(padding=(3, 5, 5), name='padding1')(input_data)
     x = Conv3D(filters=32, kernel_size=(3, 5, 5), strides=(1, 2, 2), activation='relu',
            kernel_initializer='he_normal', name='conv1')(x)
@@ -105,13 +105,13 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     #  shape maxpool: (None, 20, 7, 13, 32)
     #  shape dropout: (None, 20, 7, 13, 32)
     x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
-    x = Dropout(0.5)(x)
+    x = Dropout(0)(x)
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 4, 7, 4)
     x = TimeDistributed(Conv2D(filters=32, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
                                padding='same', activation='relu'))(x)
-    '''
+
     ## Flatten to gru
     #  shape: (None, 20, 112)
     input_lstm = TimeDistributed(Flatten())(x)
@@ -120,6 +120,10 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     #  shape: (None, 20, 512)
     x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm1')(input_lstm)
     x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm2')(x_lstm)
+    # gru = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'),
+    #                            merge_mode='concat')(self.resh1)
+    # gru = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru2'),
+    #                            merge_mode='concat')(self.gru_1)
     ## dense (512, 28) with softmax
     #  shape: (None, 20, 28)
     x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
