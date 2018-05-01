@@ -86,5 +86,5 @@ class Cnn(object):
 
     def train(self, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0.2):
         print('training')
-	history = self.model.fit(x_train, y_train, batch_size=batch_size,epochs=epochs,validation_split=val_train_ratio,shuffle=True,verbose=1)
+        history = self.model.fit(x_train, y_train, batch_size=batch_size,epochs=epochs,validation_split=val_train_ratio,shuffle=True,verbose=1)
         return history
