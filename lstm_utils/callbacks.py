@@ -41,33 +41,35 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
             Tensor `(top_paths, )` that contains
                 the log probability of each decoded sequence.
     """
-    str_list = []
+    #str_list = []
     #print("y_pred in decode", y_pred.shape)
     #print("y_pred in decode", np.squeeze(y_pred).shape)
 
-    for i, seq in enumerate(np.squeeze(y_pred)):
-        #print(seq[:,27])
-        max_ind = np.argmax(seq, axis = 1)
-        #print(max_ind)
-        max_ind = labels_to_text(max_ind)
-        str_list.append(max_ind)
+    # for i, seq in enumerate(np.squeeze(y_pred)):
+    #     #print(seq[:,27])
+    #     max_ind = np.argmax(seq, axis = 1)
+    #     #print(max_ind)
+    #     max_ind = labels_to_text(max_ind)
+    #     str_list.append(max_ind)
     #print("str_list",str_list)
     #print("input_length",input_length)
 
     #
-    # decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
-    #                        greedy=greedy, beam_width=beam_width, top_paths=top_paths)
-    # paths = [path.eval(session=K.get_session()) for path in decoded[0]]
+    decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
+                           greedy=greedy, beam_width=beam_width, top_paths=top_paths)
+    paths = [path.eval(session=K.get_session()) for path in decoded[0]]
     # print ("I am paths\n", paths)
     # #logprobs  = decoded[1].eval(session=K.get_session())
     spell = Spell(path=CURRENT_PATH+"/dictionary.txt")
     preprocessed = []
-    postprocessors=[spell.correction]
-    for output in str_list:
-        out_temp = list(set(output))
-        out = ''
-        for i in reversed(range(len(out_temp))):
-            out += out_temp[i]
+    postprocessors=[labels_to_text, spell.correction]
+    #for output in str_list:
+    for output in paths[0]:
+        # out_temp = list(set(output))
+        # out = ''
+        # for i in reversed(range(len(out_temp))):
+        #     out += out_temp[i]
+        out = output
         for postprocessor in postprocessors:
             out = postprocessor(out)
         preprocessed.append(out)
