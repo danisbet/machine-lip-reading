@@ -153,7 +153,7 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
 
-    adam = Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
 
     if start_epoch > 0:
@@ -255,7 +255,7 @@ def main():
     #for count in range(1, 5):
     # TODO: this should be walk through files in np_s*
     # range(1,5) is number of data 'npz'
-    for count in range(1, 2):
+    for count in range(1, 5):
         print("loading data for ", count)
         x, y, label_len, input_len = read_data_for_speaker(speaker_name, count)
         x = pad_input(x, max_seq_len)
