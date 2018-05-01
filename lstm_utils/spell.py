@@ -71,3 +71,4 @@ class Spell(object):
     def sentence(self, sentence):
         return untokenize(self.corrections(tokenize(sentence)))
 
+

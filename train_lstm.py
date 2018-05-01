@@ -105,7 +105,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     #  shape maxpool: (None, 20, 7, 13, 32)
     #  shape dropout: (None, 20, 7, 13, 32)
     x = TimeDistributed(MaxPooling2D(pool_size=(2,2), strides=None, name='max1'))(x)
-    x = Dropout(0.5)(x)
+    x = Dropout(0)(x)
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 4, 7, 4)
@@ -120,6 +120,10 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     #  shape: (None, 20, 512)
     x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm1')(input_lstm)
     x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm2')(x_lstm)
+    # gru = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'),
+    #                            merge_mode='concat')(self.resh1)
+    # gru = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru2'),
+    #                            merge_mode='concat')(self.gru_1)
     ## dense (512, 28) with softmax
     #  shape: (None, 20, 28)
     x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
@@ -153,7 +157,7 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
 
-    adam = Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
 
     if start_epoch > 0:
@@ -164,7 +168,7 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     #  compares each predicted word with source word.
     #  TODO: results file need to be implemented
     stats = Statistics(model, x_train, y_train, input_len_train,
-                        label_len_train, num_samples_stats=256, output_dir='lstm_model/results')
+                        label_len_train, num_samples_stats=20, output_dir='lstm_model/results')
     ## TODO: add checkpoint
     # checkpoint = Checkpoint(os.path.join('lstm_model/checkpoints', "weights{epoch:02d}.h5"),
     #                         monitor='val_loss', save_weights_only=True, mode='auto', period=1)

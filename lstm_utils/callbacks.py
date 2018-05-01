@@ -60,9 +60,9 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     paths = [path.eval(session=K.get_session()) for path in decoded[0]]
     # print ("I am paths\n", paths)
     # #logprobs  = decoded[1].eval(session=K.get_session())
-    spell = Spell(path=CURRENT_PATH+"/dictionary.txt")
+    spell = Spell(path=CURRENT_PATH+"/grid.txt")
     preprocessed = []
-    postprocessors=[labels_to_text, spell.correction]
+    postprocessors=[labels_to_text, spell.sentence]
     #for output in str_list:
     for output in paths[0]:
         # out_temp = list(set(output))
@@ -104,9 +104,9 @@ class Statistics(keras.callbacks.Callback):
             input_layer = self.model.get_layer('padding1').input
             fn = K.function([input_layer,K.learning_phase()],[output_layer,K.learning_phase()])
             y_pred = fn([input_data['the_input'],0])[0]
-            #print ("I am y_pred", y_pred)
+            #print ("I am y_pred", y_pred.shape)
 
-            decoded_res = decode(y_pred, input_data['input_length'])
+            decoded_res = decode(y_pred, np.squeeze(input_data['input_length']))
 
             for i in range(0, num_proc):
                 source_str.append(labels_to_text(self.y_train[i].astype(int)))
