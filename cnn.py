@@ -24,9 +24,9 @@ class Cnn(object):
         self.head1_zero1_1 = ZeroPadding3D(padding=(1,2,2), name='head1_zero1_1')(self.input_data)
         self.head1_conv1_1 = Conv3D(32, (3,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1_1')(self.head1_zero1_1)
         self.head1_zero1_2 = ZeroPadding3D(padding=(1,2,2), name='head1_zero1_2')(self.head1_conv1_1)
-        self.head1_conv1_2 = Conv3D(32, (3,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1_2')(self.head1_zero1_2)
+        self.head1_conv1_2 = Conv3D(32, (3,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1_2')(self.head1_zero1_2)
         self.head1_zero1_3 = ZeroPadding3D(padding=(1,2,2), name='head1_zero1_3')(self.head1_conv1_2)
-        self.head1_conv1_3 = Conv3D(32, (3,5,5), strides=(1,2,2), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1_3')(self.head1_zero1_3)
+        self.head1_conv1_3 = Conv3D(32, (3,5,5), strides=(1,1,1), activation='relu', kernel_initializer='glorot_normal', name='head1_conv1_3')(self.head1_zero1_3)
         self.head1_maxp1 = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='head1_maxp1')(self.head1_conv1_3)
         self.head1_drop1 = Dropout(0.5)(self.head1_maxp1)
 
