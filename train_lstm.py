@@ -240,7 +240,7 @@ def main():
     speaker_id = args.speaker_id
     speaker_name = 's'+str(speaker_id)
 
-    epochs = 2000
+    epochs = 20
     if start_epoch >= epochs:
         print "start_epoch too large, should be smaller than 2000!"
 
