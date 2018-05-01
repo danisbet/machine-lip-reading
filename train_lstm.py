@@ -126,8 +126,8 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     #                            merge_mode='concat')(self.gru_1)
     ## dense (512, 28) with softmax
     #  shape: (None, 20, 28)
-    x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
-
+    x_lstm = Dense(128, kernel_initializer='he_normal', name='dense1')(x_lstm)
+    x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense2')(x_lstm)
     ## prepare input for ctc loss
     y_pred = Activation('softmax', name='softmax')(x_lstm)
     labels = Input(name='the_labels', shape = [max_string_len], dtype='int32')
