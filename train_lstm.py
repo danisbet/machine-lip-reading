@@ -39,21 +39,22 @@ def ctc_lambda_func(args):
     # tend to be garbage:
     # y_pred = y_pred[:, 2:, :]
 
-    label_length = K.cast(tf.squeeze(label_length),'int32')
-    input_length = K.cast(tf.squeeze(input_length),'int32')
-    labels = K.ctc_label_dense_to_sparse(labels, label_length)
+    # label_length = K.cast(tf.squeeze(label_length),'int32')
+    # input_length = K.cast(tf.squeeze(input_length),'int32')
+    # labels = K.ctc_label_dense_to_sparse(labels, label_length)
     print ("I am labels",labels)
-    # y_pred = y_pred[:, :, :]
-    # return K.ctc_batch_cost(labels, y_pred, input_length, label_length, ignore_longer_outputs_than_inputs=True)
-    return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
-                         ignore_longer_outputs_than_inputs = True, time_major = False)
+    # return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
+    #                      ignore_longer_outputs_than_inputs=True, time_major=False)
+    y_pred = y_pred[:, :, :]
+    return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
+
 
 
 def CTC(name, args):
     ######################################
     # return CTC loss as a labmda function
     ######################################
-    print ("I am labels", labels)
+
 	return Lambda(ctc_lambda_func, output_shape=(1,), name=name)(args)
 
 
@@ -275,6 +276,8 @@ def main():
     # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
     print x_train.shape
     model = build_model(x.shape[1:], 28, max_string_len=10)
+
+    input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
     history = train(model, x_train, y_train, label_len_train, input_len_train, batch_size = 100, epochs=epochs, start_epoch = start_epoch)
     
     print("Finish Training...")
