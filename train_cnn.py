@@ -17,7 +17,7 @@ CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = CURRENT_PATH + '/data'
 
 def main():
-    epochs = 10
+    epochs = 100
     #x, y = load_data(DATA_PATH, verbose=False, num_samples=5)
     x = np.load('/global/scratch/alex_vlissidis/X.npz')['x']
     y = np.load('/global/scratch/alex_vlissidis/y.npz')['y']
@@ -35,7 +35,7 @@ def main():
     history = model.train(x_train, y_train, epochs=epochs)
 
     print("Saving model...")
-    model.model.save('models/model-adadelta.h5') 
+    model.model.save('models/model.h5') 
 
     print("Plotting...")
     f, (ax1, ax2) = plt.subplots(2, 1)
@@ -48,7 +48,7 @@ def main():
     ax1.legend()
     ax2.legend()
 
-    f.savefig('figures/training-adadelta.png', dpi=300)
+    f.savefig('figures/training.png', dpi=300)
     print("Done.")
 
 
