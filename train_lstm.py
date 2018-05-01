@@ -44,7 +44,7 @@ def ctc_lambda_func(args):
     # labels = K.ctc_label_dense_to_sparse(labels, label_length)
     # return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
     #                      ignore_longer_outputs_than_inputs=True, time_major=False)
-    y_pred = y_pred[:, 2:, :]
+    y_pred = y_pred[:, :, :]
     return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
 
@@ -255,7 +255,7 @@ def main():
     #for count in range(1, 5):
     # TODO: this should be walk through files in np_s*
     # range(1,5) is number of data 'npz'
-    for count in range(1, 2):
+    for count in range(1, 5):
         print("loading data for ", count)
         x, y, label_len, input_len = read_data_for_speaker(speaker_name, count)
         x = pad_input(x, max_seq_len)
@@ -277,7 +277,7 @@ def main():
     model = build_model(x.shape[1:], 28, max_string_len=10)
 
     input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
-    history = train(model, x_train, y_train, label_len_train, input_len_train, batch_size = 100, epochs=epochs, start_epoch = start_epoch)
+    history = train(model, x_train, y_train, label_len_train, input_len_train, batch_size = 80, epochs=epochs, start_epoch = start_epoch)
     
     print("Finish Training...")
     model.save('model_lstm.h5')
