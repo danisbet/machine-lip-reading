@@ -16,8 +16,8 @@ from keras.models import Model
 from keras.layers.wrappers import TimeDistributed, Bidirectional
 from keras.layers.recurrent import GRU,LSTM
 from keras.layers import Input
-from keras.layers.convolutional import ZeroPadding3D, Conv2D
-from keras.layers.pooling import MaxPooling2D
+from keras.layers.convolutional import ZeroPadding3D, Conv3D
+from keras.layers.pooling import MaxPooling3D
 from keras.layers.core import Lambda, Dropout, Flatten, Dense, Activation
 from keras.optimizers import Adam
 from keras import backend as K
@@ -72,7 +72,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     #self.input_data = Input(name='the_input', shape=input_size, dtype='float32')
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
-    '''
+
     x = ZeroPadding3D(padding=(3, 5, 5), name='padding1')(input_data)
     x = Conv3D(filters=32, kernel_size=(3, 5, 5), strides=(1, 2, 2), activation='relu',
            kernel_initializer='he_normal', name='conv1')(x)
@@ -111,7 +111,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     #  shape 1st conv: (None, 20, 4, 7, 4)
     x = TimeDistributed(Conv2D(filters=32, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
                                padding='same', activation='relu'))(x)
-
+    '''
     ## Flatten to gru
     #  shape: (None, 20, 112)
     input_lstm = TimeDistributed(Flatten())(x)
