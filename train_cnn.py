@@ -1,12 +1,12 @@
-from preprocessing.data import load_data
+#from preprocessing.data import load_data
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import numpy as np
-import pickle
+#import pickle
 
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+#from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
