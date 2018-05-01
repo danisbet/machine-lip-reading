@@ -106,7 +106,7 @@ class Statistics(keras.callbacks.Callback):
             fn = K.function([input_layer,K.learning_phase()],[output_layer,K.learning_phase()])
             y_pred = fn([input_data['the_input'],0])[0]
             #print ("I am y_pred", y_pred.shape)
-            print np.argmax(y_pred[0], axis = 2)
+            print np.argmax(y_pred[0], axis = 1)
             decoded_res = decode(y_pred, np.squeeze(input_data['input_length']))
 
             for i in range(0, num_proc):
