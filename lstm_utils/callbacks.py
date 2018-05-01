@@ -61,6 +61,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     # print ("I am paths\n", paths)
     # #logprobs  = decoded[1].eval(session=K.get_session())
     spell = Spell(path=CURRENT_PATH+"/grid.txt")
+    print(y_pred[0,:,27])
     preprocessed = []
     postprocessors=[labels_to_text, spell.sentence]
     #for output in str_list:
@@ -105,7 +106,7 @@ class Statistics(keras.callbacks.Callback):
             fn = K.function([input_layer,K.learning_phase()],[output_layer,K.learning_phase()])
             y_pred = fn([input_data['the_input'],0])[0]
             #print ("I am y_pred", y_pred.shape)
-
+            print np.argmax(y_pred[0], axis = 2)
             decoded_res = decode(y_pred, np.squeeze(input_data['input_length']))
 
             for i in range(0, num_proc):
