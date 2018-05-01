@@ -164,7 +164,7 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     #  compares each predicted word with source word.
     #  TODO: results file need to be implemented
     stats = Statistics(model, x_train, y_train, input_len_train,
-                        label_len_train, num_samples_stats=256, output_dir='lstm_model/results')
+                        label_len_train, num_samples_stats=20, output_dir='lstm_model/results')
     ## TODO: add checkpoint
     # checkpoint = Checkpoint(os.path.join('lstm_model/checkpoints', "weights{epoch:02d}.h5"),
     #                         monitor='val_loss', save_weights_only=True, mode='auto', period=1)
