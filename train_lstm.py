@@ -42,6 +42,10 @@ def ctc_lambda_func(args):
     label_length = K.cast(tf.squeeze(label_length),'int32')
     input_length = K.cast(tf.squeeze(input_length),'int32')
     labels = K.ctc_label_dense_to_sparse(labels, label_length)
+    sess = tf.Session()
+    print("labels shape", sess.run(labels).shape)
+    print("y_pred shape", y_pred.shape)
+    sess.close()
     return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
                          ignore_longer_outputs_than_inputs=True, time_major=False)
     # y_pred = y_pred[:, :, :]
@@ -133,7 +137,7 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     labels = Input(name='the_labels', shape = [max_string_len], dtype='int32')
     input_length = Input(name = 'input_length', shape =[1], dtype = 'int32')
     label_length = Input(name = 'label_length', shape = [1], dtype = 'int32')
-    loss = CTC('ctc',[y_pred, labels, input_length, label_length])
+    loss = CTC('ctc',[y_pred, labels, input_length, label_length]) + y_pred[:,:,27]
     model = Model(inputs=[input_data, labels, label_length, input_length],
                   outputs = loss)
     model.summary()
