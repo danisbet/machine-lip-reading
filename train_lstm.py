@@ -47,14 +47,14 @@ def ctc_lambda_func(args):
     label_length = tf.to_int32(tf.squeeze(label_length, axis=-1))
     input_length = tf.to_int32(tf.squeeze(input_length, axis=-1))
     sparse_labels = tf.to_int32(K.ctc_label_dense_to_sparse(labels, label_length))
-    y_pred = tf.log(tf.transpose(y_pred, perm=[1, 0, 2]) + 1e-7)
+    y_pred = tf.log(tf.transpose(y_pred, perm=[0, 1, 2]) + 1e-7)
 
     return tf.expand_dims(ctc.ctc_loss(inputs=y_pred,
                                        labels=sparse_labels,
                                        sequence_length=input_length,
                                        ctc_merge_repeated=False,
                                        ignore_longer_outputs_than_inputs=True,
-                                       time_major=True), 1)
+                                       time_major=False), 1)
 
     # return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
     #                      ignore_longer_outputs_than_inputs=True, time_major=False)
