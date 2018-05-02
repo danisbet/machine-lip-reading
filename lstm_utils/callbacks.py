@@ -82,7 +82,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
         for st in decoded
     ]
 
-    paths = [path.eval(session=K.get_session()) for path in decoded_dense[0]]
+    paths = [path.eval(session=K.get_session()) for path in decoded_dense]
     # print ("I am paths\n", paths)
     # #logprobs  = decoded[1].eval(session=K.get_session())
     spell = Spell(path=CURRENT_PATH+"/grid.txt")
