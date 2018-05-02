@@ -33,21 +33,31 @@ def ctc_lambda_func(args):
     # label need to import tensorflow
     ###################################################
     import tensorflow as tf
+    from tensorflow.python.ops import ctc_ops as ctc
     y_pred, labels, input_length, label_length = args
     # From Keras example image_ocr.py:
     # the 2 is critical here since the first couple outputs of the RNN
     # tend to be garbage:
     # y_pred = y_pred[:, 2:, :]
 
-    label_length = K.cast(tf.squeeze(label_length),'int32')
-    input_length = K.cast(tf.squeeze(input_length),'int32')
-    labels = K.ctc_label_dense_to_sparse(labels, label_length)
-    sess = tf.Session()
-    print("labels shape", sess.run(labels).shape)
-    print("y_pred shape", y_pred.shape)
-    sess.close()
-    return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
-                         ignore_longer_outputs_than_inputs=True, time_major=False)
+    # label_length = K.cast(tf.squeeze(label_length),'int32')
+    # input_length = K.cast(tf.squeeze(input_length),'int32')
+    # labels = K.ctc_label_dense_to_sparse(labels, label_length)
+
+    label_length = tf.to_int32(tf.squeeze(label_length, axis=-1))
+    input_length = tf.to_int32(tf.squeeze(input_length, axis=-1))
+    sparse_labels = tf.to_int32(K.ctc_label_dense_to_sparse(labels, label_length))
+    y_pred = tf.log(tf.transpose(y_pred, perm=[1, 0, 2]) + 1e-7)
+
+    return tf.expand_dims(ctc.ctc_loss(inputs=y_pred,
+                                       labels=sparse_labels,
+                                       sequence_length=input_length,
+                                       ctc_merge_repeated=False,
+                                       ignore_longer_outputs_than_inputs=True,
+                                       time_major=False), 1)
+
+    # return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
+    #                      ignore_longer_outputs_than_inputs=True, time_major=False)
     # y_pred = y_pred[:, :, :]
     # return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
