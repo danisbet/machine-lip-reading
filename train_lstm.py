@@ -132,12 +132,12 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     ## Bidirectional gru
     #  shape: (None, 20, 512)
-    x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm1')(input_lstm)
-    x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm2')(x_lstm)
-    # gru = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'),
-    #                            merge_mode='concat')(self.resh1)
-    # gru = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru2'),
-    #                            merge_mode='concat')(self.gru_1)
+    #x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm1')(input_lstm)
+    #x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm2')(x_lstm)
+    x_lstm = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'),
+                            merge_mode='concat')(input_lstm)
+    x_lstm = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru2'),
+                            merge_mode='concat')(x_lstm)
     ## dense (512, 28) with softmax
     #  shape: (None, 20, 28)
     x_lstm = Dense(128, kernel_initializer='he_normal', name='dense1')(x_lstm)
