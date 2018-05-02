@@ -54,7 +54,7 @@ def ctc_lambda_func(args):
                                        sequence_length=input_length,
                                        ctc_merge_repeated=False,
                                        ignore_longer_outputs_than_inputs=True,
-                                       time_major=False), 1)
+                                       time_major=True), 1)
 
     # return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
     #                      ignore_longer_outputs_than_inputs=True, time_major=False)
