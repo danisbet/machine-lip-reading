@@ -171,7 +171,7 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
 
-    adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
 
     if start_epoch > 0:
@@ -258,7 +258,7 @@ def main():
     speaker_id = args.speaker_id
     speaker_name = 's'+str(speaker_id)
 
-    epochs = 40
+    epochs = 60
     if start_epoch >= epochs:
         print "start_epoch too large, should be smaller than 2000!"
 
@@ -301,7 +301,7 @@ def main():
     model.save('model_lstm.h5')
 
     # TODO: add visualization
-    # print("Plotting...")
+    print("Plotting...")
     # ax2.plot(range(1, epochs + 1), history.history['loss'], 'tab:orange', label="loss")
     # ax2.plot(range(1, epochs + 1), history.history['val_loss'], 'tab:green', label="validation loss")
     #f, (ax1, ax2) = plt.plot()
