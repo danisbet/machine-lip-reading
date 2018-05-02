@@ -60,7 +60,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     #
     decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
                            greedy=greedy, beam_width=beam_width, top_paths=top_paths)
-    y_pred = math_ops.log(array_ops.transpose(y_pred, perm=[0, 1, 2]) + epsilon())
+    y_pred = math_ops.log(array_ops.transpose(y_pred, perm=[1, 0, 2]) + epsilon())
     input_length = math_ops.to_int32(input_length)
 
     if greedy:
