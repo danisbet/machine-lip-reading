@@ -175,14 +175,14 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
 
     if start_epoch > 0:
-        weight_file = os.path.join(CURRENT_PATH, 'lstm_model/checkpoints', run_name , "weights{epoch:02d}.h5")
+        weight_file = os.path.join(CURRENT_PATH, "model_lstm.h5")
         model.load_weights(weight_file)
     ## callbacks when each epoch ends
     #  This will ouput character error rate which
     #  compares each predicted word with source word.
     #  TODO: results file need to be implemented
     stats = Statistics(model, x_train, y_train, input_len_train,
-                        label_len_train, num_samples_stats=20, output_dir='lstm_model/results')
+                        label_len_train, num_samples_stats=50, output_dir='lstm_model/results')
     ## TODO: add checkpoint
     # checkpoint = Checkpoint(os.path.join('lstm_model/checkpoints', "weights{epoch:02d}.h5"),
     #                         monitor='val_loss', save_weights_only=True, mode='auto', period=1)
