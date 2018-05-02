@@ -250,11 +250,11 @@ def main():
     ## add parser to initialize  start_epoch as well as learning rate
     parser = argparse.ArgumentParser(description=' CNN+GRU model for lip reading.')
     #parser.add_argument("-lr", default=0.00001, type=float, help="learning rate")
-    # parser.add_argument("-se", dest ='start_epoch', default=0, type=int, help="start_epoch")
+    parser.add_argument("-se", dest ='start_epoch', default=0, type=int, help="start_epoch")
     parser.add_argument("-sid", dest='speaker_id', default=1, type=int, help="speaker id")
     args = parser.parse_args()
-    # start_epoch = args.start_epoch
-    start_epoch = 0
+    start_epoch = args.start_epoch
+    # start_epoch = 0
     speaker_id = args.speaker_id
     speaker_name = 's'+str(speaker_id)
 
