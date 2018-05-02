@@ -22,7 +22,7 @@ def labels_to_text(labels):
             text += ' '
     return text
 
-def decode(y_pred, input_length, greedy=False, beam_width=100, top_paths=1):
+def decode(y_pred, input_length, greedy=False, beam_width=200, top_paths=1):
     """Decodes the output of a softmax.
     Can use either greedy search (also known as best path)
     or a constrained dictionary search.
