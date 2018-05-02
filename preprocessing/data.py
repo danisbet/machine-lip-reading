@@ -40,7 +40,8 @@ def load_data(datapath, verbose=False, num_samples=-1, ctc_encoding=False):
 
     x = list()
     y = list()
-    for root, dirs, files in os.walk(datapath):
+    path = datapath + '/' + str(1)
+    for root, dirs, files in os.walk(path):
         for name in files:
             if '.mpg' in name:
                 if verbose is True:
