@@ -260,7 +260,7 @@ def main():
     #for count in range(1, 5):
     # TODO: this should be walk through files in np_s*
     # range(1,5) is number of data 'npz'
-    for count in range(1, 5):
+    for count in range(1, 6):
         print("loading data for ", count)
         x, y, label_len, input_len = read_data_for_speaker(speaker_name, count)
         x = pad_input(x, max_seq_len)
@@ -281,7 +281,7 @@ def main():
     print x_train.shape
     model = build_model(x.shape[1:], 28, max_string_len=10)
 
-    input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
+    # input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
     history = train(model, x_train, y_train, label_len_train, input_len_train, batch_size = 80, epochs=epochs, start_epoch = start_epoch)
     
     print("Finish Training...")
