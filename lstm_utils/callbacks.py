@@ -8,6 +8,8 @@ from spell import Spell
 import tensorflow as tf
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import ctc_ops as ctc
+
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 def labels_to_text(labels):
     # 26 is space, 27 is CTC blank char
@@ -58,8 +60,8 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     #print("input_length",input_length)
 
     #
-    decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
-                           greedy=greedy, beam_width=beam_width, top_paths=top_paths)
+    # decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
+    #                        greedy=greedy, beam_width=beam_width, top_paths=top_paths)
     y_pred = math_ops.log(array_ops.transpose(y_pred, perm=[1, 0, 2]) + 1e-7)
     input_length = math_ops.to_int32(input_length)
 
