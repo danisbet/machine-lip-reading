@@ -8,6 +8,7 @@ from spell import Spell
 import tensorflow as tf
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import sparse_ops
 from tensorflow.python.ops import ctc_ops as ctc
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
