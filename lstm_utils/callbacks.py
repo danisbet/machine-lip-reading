@@ -5,6 +5,9 @@ import editdistance
 import csv
 import os
 from spell import Spell
+import tensorflow as tf
+from tensorflow.python.ops import math_ops
+from tensorflow.python.ops import array_ops
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 def labels_to_text(labels):
     # 26 is space, 27 is CTC blank char
@@ -57,10 +60,30 @@ def decode(y_pred, input_length, greedy=False, beam_width=10, top_paths=1):
     #
     decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
                            greedy=greedy, beam_width=beam_width, top_paths=top_paths)
-    paths = [path.eval(session=K.get_session()) for path in decoded[0]]
+    y_pred = math_ops.log(array_ops.transpose(y_pred, perm=[0, 1, 2]) + epsilon())
+    input_length = math_ops.to_int32(input_length)
+
+    if greedy:
+        (decoded, log_prob) = ctc.ctc_greedy_decoder(
+            inputs=y_pred, sequence_length=input_length)
+    else:
+        (decoded, log_prob) = ctc.ctc_beam_search_decoder(
+            inputs=y_pred,
+            sequence_length=input_length,
+            beam_width=beam_width,
+            top_paths=top_paths,
+            merge_repeated=False)
+    decoded_dense = [
+        sparse_ops.sparse_to_dense(
+            st.indices, st.dense_shape, st.values, default_value=-1)
+        for st in decoded
+    ]
+
+    paths = [path.eval(session=K.get_session()) for path in decoded_dense[0]]
     # print ("I am paths\n", paths)
     # #logprobs  = decoded[1].eval(session=K.get_session())
     spell = Spell(path=CURRENT_PATH+"/grid.txt")
+
     print(y_pred[0,:,27])
     preprocessed = []
     postprocessors=[labels_to_text, spell.sentence]

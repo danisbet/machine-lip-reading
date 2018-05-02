@@ -287,7 +287,7 @@ def main():
     print(x_s.shape, y_s.shape)
     y_s = y_s.astype(int)
     x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
-    input_len_train, input_len_test = train_test_split(x_s, y_s, label_lens, input_lens, test_size=0.2)
+    input_len_train, input_len_test = train_test_split(x_s, y_s, label_lens, input_lens, test_size=0.2, shuffle = False)
 
     # 28 is outout size
     # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
