@@ -80,7 +80,7 @@ def build_model(input_size, output_size=28):
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 4, 7, 4)
-    model.add(TimeDistributed(Conv2D(filters=32, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
+    model.add(TimeDistributed(Conv2D(filters=96, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
                                padding='same', activation='relu')))
 
     ## Flatten to gru
@@ -212,7 +212,7 @@ def main():
     speaker_id = args.speaker_id
     speaker_name = 's' + str(speaker_id)
 
-    epochs = 25
+    epochs = 40
     if start_epoch >= epochs:
         print "start_epoch too large, should be smaller than 2000!"
 
