@@ -236,8 +236,8 @@ def main():
     #     label_lens = np.concatenate([label_len, label_lens])
     #     input_lens = np.concatenate([input_len, input_lens])
     # TODO: add data path
-    x_path = DATA_PATH + 'X.npz'
-    y_path = DATA_PATH + 'y.npz'
+    x_path = DATA_PATH + '/X.npz'
+    y_path = DATA_PATH + '/y.npz'
     x_s = np.load(x_path)['X']
     y_s = np.load(y_path)['y']
     x_s = pad_input(x_s, max_seq_len)
