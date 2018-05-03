@@ -33,6 +33,7 @@ def ctc_lambda_func(args):
     # label need to import tensorflow
     ###################################################
     import tensorflow as tf
+    from tensorflow.python.ops import ctc_ops as ctc
     y_pred, labels, input_length, label_length = args
     # From Keras example image_ocr.py:
     # the 2 is critical here since the first couple outputs of the RNN
@@ -42,10 +43,23 @@ def ctc_lambda_func(args):
     # label_length = K.cast(tf.squeeze(label_length),'int32')
     # input_length = K.cast(tf.squeeze(input_length),'int32')
     # labels = K.ctc_label_dense_to_sparse(labels, label_length)
+
+    label_length = tf.to_int32(tf.squeeze(label_length, axis=-1))
+    input_length = tf.to_int32(tf.squeeze(input_length, axis=-1))
+    sparse_labels = tf.to_int32(K.ctc_label_dense_to_sparse(labels, label_length))
+    y_pred = tf.log(tf.transpose(y_pred, perm=[0, 1, 2]) + 1e-7)
+
+    return tf.expand_dims(ctc.ctc_loss(inputs=y_pred,
+                                       labels=sparse_labels,
+                                       sequence_length=input_length,
+                                       ctc_merge_repeated=False,
+                                       ignore_longer_outputs_than_inputs=True,
+                                       time_major=False), 1)
+
     # return tf.nn.ctc_loss(labels, y_pred, input_length, ctc_merge_repeated=False,
     #                      ignore_longer_outputs_than_inputs=True, time_major=False)
-    y_pred = y_pred[:, :, :]
-    return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
+    # y_pred = y_pred[:, :, :]
+    # return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
 
 
@@ -124,19 +138,19 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     ## Bidirectional gru
     #  shape: (None, 20, 512)
-    x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm1')(input_lstm)
-    x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm2')(x_lstm)
-    # gru = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'),
-    #                            merge_mode='concat')(self.resh1)
-    # gru = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru2'),
-    #                            merge_mode='concat')(self.gru_1)
+    #x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm1')(input_lstm)
+    #x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm2')(x_lstm)
+    x_lstm = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru1'),
+                            merge_mode='concat')(input_lstm)
+    x_lstm = Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru2'),
+                            merge_mode='concat')(x_lstm)
     ## dense (512, 28) with softmax
     #  shape: (None, 20, 28)
     x_lstm = Dense(1024, activation='relu')(x_lstm)
     x_lstm = Dense(1024, activation='relu')(x_lstm)
     x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
 
-    ## prepare input for ctc loss
+   ## prepare input for ctc loss
     y_pred = Activation('softmax', name='softmax')(x_lstm)
     labels = Input(name='the_labels', shape = [max_string_len], dtype='int32')
     input_length = Input(name = 'input_length', shape =[1], dtype = 'int32')
@@ -165,18 +179,18 @@ def train(model, x_train, y_train, label_len_train, input_len_train, batch_size=
     if y_train.shape[1] != max_string_len:
         y_train = pad_labels(y_train, max_string_len)
 
-    adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=adam)
 
     if start_epoch > 0:
-        weight_file = os.path.join(CURRENT_PATH, 'lstm_model/checkpoints', run_name , "weights{epoch:02d}.h5")
+        weight_file = os.path.join(CURRENT_PATH, "model_lstm.h5")
         model.load_weights(weight_file)
     ## callbacks when each epoch ends
     #  This will ouput character error rate which
     #  compares each predicted word with source word.
     #  TODO: results file need to be implemented
     stats = Statistics(model, x_train, y_train, input_len_train,
-                        label_len_train, num_samples_stats=20, output_dir='lstm_model/results')
+                        label_len_train, num_samples_stats=50, output_dir='lstm_model/results')
     ## TODO: add checkpoint
     # checkpoint = Checkpoint(os.path.join('lstm_model/checkpoints', "weights{epoch:02d}.h5"),
     #                         monitor='val_loss', save_weights_only=True, mode='auto', period=1)
@@ -244,15 +258,15 @@ def main():
     ## add parser to initialize  start_epoch as well as learning rate
     parser = argparse.ArgumentParser(description=' CNN+GRU model for lip reading.')
     #parser.add_argument("-lr", default=0.00001, type=float, help="learning rate")
-    # parser.add_argument("-se", dest ='start_epoch', default=0, type=int, help="start_epoch")
+    parser.add_argument("-se", dest ='start_epoch', default=0, type=int, help="start_epoch")
     parser.add_argument("-sid", dest='speaker_id', default=1, type=int, help="speaker id")
     args = parser.parse_args()
-    # start_epoch = args.start_epoch
-    start_epoch = 0
+    start_epoch = args.start_epoch
+    # start_epoch = 0
     speaker_id = args.speaker_id
     speaker_name = 's'+str(speaker_id)
 
-    epochs = 20
+    epochs = 200
     if start_epoch >= epochs:
         print("start_epoch too large, should be smaller than 2000!")
     max_seq_len = 25
@@ -266,7 +280,7 @@ def main():
     #for count in range(1, 5):
     # TODO: this should be walk through files in np_s*
     # range(1,5) is number of data 'npz'
-    for count in range(1, 5):
+    for count in range(1, 6):
         print("loading data for ", count)
         x, y, label_len, input_len = read_data_for_speaker(speaker_name, count)
         x = pad_input(x, max_seq_len)
@@ -280,27 +294,28 @@ def main():
     print(x_s.shape, y_s.shape)
     y_s = y_s.astype(int)
     x_train, x_test, y_train, y_test, label_len_train, label_len_test, \
-    input_len_train, input_len_test = train_test_split(x_s, y_s, label_lens, input_lens, test_size=0.2)
+    input_len_train, input_len_test = train_test_split(x_s, y_s, label_lens, input_lens, test_size=0.2, shuffle = False)
 
     # 28 is outout size
     # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
     print(x_train.shape)
     model = build_model(x.shape[1:], 28, max_string_len=10)
 
-    input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
+    # input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
     history = train(model, x_train, y_train, label_len_train, input_len_train, batch_size = 80, epochs=epochs, start_epoch = start_epoch)
     
     print("Finish Training...")
     model.save('model_lstm.h5')
 
     # TODO: add visualization
-    # print("Plotting...")
+    print("Plotting...")
     # ax2.plot(range(1, epochs + 1), history.history['loss'], 'tab:orange', label="loss")
     # ax2.plot(range(1, epochs + 1), history.history['val_loss'], 'tab:green', label="validation loss")
-    #f, (ax1, ax2) = plt.subplots(2, 1)
+    #f, (ax1, ax2) = plt.plot()
     #ax1.plot(range(1, epochs+1), history.history['val_acc'], 'tab:blue', label="validation accuracy")
     #ax1.plot(range(1, epochs+1), history.history['acc'], 'tab:red', label="training accuracy")
-
+    # ax2.plot(range(1, epochs + 1), history.history['loss'], 'tab:orange', label="loss")
+    # ax2.plot(range(1, epochs + 1), history.history['val_loss'], 'tab:green', label="validation loss")
 
 
     #ax1.legend()

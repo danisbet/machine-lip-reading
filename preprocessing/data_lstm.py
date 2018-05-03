@@ -32,6 +32,7 @@ def labels_to_text(labels):
 def get_sil_image():
     img_dir = os.path.join(CURRENT_PATH, 'sil_img.png')
     sil_img = imread(img_dir)
+    #sil_img = np.zeros((50, 100, 3))
     return sil_img
 
 def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=True):
