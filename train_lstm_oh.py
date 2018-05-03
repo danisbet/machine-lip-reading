@@ -212,7 +212,7 @@ def main():
     speaker_id = args.speaker_id
     speaker_name = 's' + str(speaker_id)
 
-    epochs = 40
+    epochs = 1
     if start_epoch >= epochs:
         print "start_epoch too large, should be smaller than 2000!"
 
@@ -261,17 +261,17 @@ def main():
     model.save('model_lstm_oh.h5')
 
     # TODO: add visualization
-    print("Plotting...")
 
-    f, (ax1, ax2) = plt.plot()
+    print("Plotting...")
+    f, (ax1, ax2) = plt.subplots(2, 1)
     ax1.plot(range(1, epochs+1), history.history['val_acc'], 'tab:blue', label="validation accuracy")
     ax1.plot(range(1, epochs+1), history.history['acc'], 'tab:red', label="training accuracy")
-    ax2.plot(range(1, epochs + 1), history.history['loss'], 'tab:orange', label="loss")
-    ax2.plot(range(1, epochs + 1), history.history['val_loss'], 'tab:green', label="validation loss")
+
+    ax2.plot(range(1, epochs+1), history.history['loss'], 'tab:orange', label="loss")
+    ax2.plot(range(1, epochs+1), history.history['val_loss'], 'tab:green', label="validation loss")
 
     ax1.legend()
     ax2.legend()
-
     f.savefig('training.png', dpi=300)
     print("Done.")
 
