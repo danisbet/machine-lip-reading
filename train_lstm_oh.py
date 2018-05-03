@@ -238,7 +238,7 @@ def main():
     # TODO: add data path
     x_path = DATA_PATH + '/../X.npz'
     y_path = DATA_PATH + '/../y.npz'
-    x_s = np.load(x_path)['X']
+    x_s = np.load(x_path)['x']
     y_s = np.load(y_path)['y']
     x_s = pad_input(x_s, max_seq_len)
     end = time.time()
