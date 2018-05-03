@@ -1,6 +1,8 @@
 from preprocessing.data_lstm import read_data_for_speaker
 from preprocessing.data_lstm import get_sil_image
 from lstm_utils.callbacks import Statistics
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import numpy as np
@@ -62,24 +64,24 @@ def build_model(input_size, output_size=28):
     ## padding used on the height and width before convolving
     #  shape:(None, 20, 54, 104, 3)
     model = Sequential()
-    model.add(ZeroPadding3D(padding=(0, 2, 2),input_shape = (input_size), name='padding1'))
+    model.add(ZeroPadding3D(padding=(1, 2, 2),input_shape = (input_size), name='padding1'))
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 27, 52, 32)
     #  shape 2nd conv: (None, 20, 14, 26, 32)
     model.add(TimeDistributed(Conv2D(filters=34, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
-    model.add(TimeDistributed(Conv2D(filters=34, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
+    model.add(TimeDistributed(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='max1')))
+    model.add(TimeDistributed(Conv2D(filters=64, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
 
     ## Max pool on each time sequence and Dropout
     #  shape maxpool: (None, 20, 7, 13, 32)
     #  shape dropout: (None, 20, 7, 13, 32)
-    model.add(TimeDistributed(MaxPooling2D(pool_size=(2, 2), strides=None, name='max1')))
+    model.add(TimeDistributed(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='max2')))
     model.add(Dropout(0))
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 4, 7, 4)
-    model.add(TimeDistributed(Conv2D(filters=96, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
-                               padding='same', activation='relu')))
+    model.add(TimeDistributed(Conv2D(filters=96, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
 
     ## Flatten to gru
     #  shape: (None, 20, 112)
@@ -96,7 +98,7 @@ def build_model(input_size, output_size=28):
     ## dense (512, 28) with softmax
     model.add(Flatten())
     #  shape: (None, 20, 28)
-    model.add(Dense(1000, activation='relu', kernel_initializer='he_normal', name='dense1'))
+    model.add(Dense(1024, activation='relu', kernel_initializer='he_normal', name='dense1'))
     model.add(Dense(output_size, kernel_initializer='he_normal', name='dense2'))
 
     ## prepare input for ctc loss
@@ -210,7 +212,7 @@ def main():
     speaker_id = args.speaker_id
     speaker_name = 's' + str(speaker_id)
 
-    epochs = 1
+    epochs = 20
     if start_epoch >= epochs:
         print("start_epoch too large, should be smaller than 2000!")
 
