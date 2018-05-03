@@ -212,7 +212,7 @@ def main():
     speaker_id = args.speaker_id
     speaker_name = 's' + str(speaker_id)
 
-    epochs = 200
+    epochs = 25
     if start_epoch >= epochs:
         print "start_epoch too large, should be smaller than 2000!"
 
@@ -254,7 +254,7 @@ def main():
     model = build_model(x_train.shape[1:], y_train.shape[1])
 
     # input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
-    history = train(model, x_train, y_train, batch_size=80, epochs=epochs,
+    history = train(model, x_train, y_train, batch_size=200, epochs=epochs,
                     start_epoch=start_epoch)
 
     print("Finish Training...")
