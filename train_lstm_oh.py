@@ -62,7 +62,7 @@ def build_model(input_size, output_size=28, max_string_len=10):
     ## padding used on the height and width before convolving
     #  shape:(None, 20, 54, 104, 3)
     model = Sequential()
-    model.add(ZeroPadding3D(padding=(0, 2, 2), name='padding1'))
+    model.add(ZeroPadding3D(padding=(0, 2, 2),input_shape = (input_size), name='padding1'))
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 27, 52, 32)
