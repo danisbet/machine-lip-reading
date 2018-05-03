@@ -251,7 +251,7 @@ def main():
     # 28 is outout size
     # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
     print x_train.shape
-    model = build_model(x.shape[1:], 51, max_string_len=10)
+    model = build_model(x_train.shape[1:], 51, max_string_len=10)
 
     # input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
     history = train(model, x_train, y_train, batch_size=80, epochs=epochs,
