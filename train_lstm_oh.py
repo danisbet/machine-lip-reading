@@ -23,7 +23,7 @@ from keras.optimizers import Adam
 from keras import backend as K
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = CURRENT_PATH + '/data'
+DATA_PATH = "/global/scratch/alex_vlissidis"
 
 
 
@@ -67,10 +67,8 @@ def build_model(input_size, output_size=28):
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 27, 52, 32)
     #  shape 2nd conv: (None, 20, 14, 26, 32)
-    model.add(TimeDistributed(Conv2D(filters=64, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
-                               padding='same', activation='relu')))
-    model.add(TimeDistributed(Conv2D(filters=64, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
-                               padding='same', activation='relu')))
+    model.add(TimeDistributed(Conv2D(filters=34, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
+    model.add(TimeDistributed(Conv2D(filters=34, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
 
     ## Max pool on each time sequence and Dropout
     #  shape maxpool: (None, 20, 7, 13, 32)
@@ -98,7 +96,7 @@ def build_model(input_size, output_size=28):
     ## dense (512, 28) with softmax
     model.add(Flatten())
     #  shape: (None, 20, 28)
-    model.add(Dense(128, kernel_initializer='he_normal', name='dense1'))
+    model.add(Dense(1000, activation='relu', kernel_initializer='he_normal', name='dense1'))
     model.add(Dense(output_size, kernel_initializer='he_normal', name='dense2'))
 
     ## prepare input for ctc loss
@@ -214,7 +212,7 @@ def main():
 
     epochs = 40
     if start_epoch >= epochs:
-        print "start_epoch too large, should be smaller than 2000!"
+        print("start_epoch too large, should be smaller than 2000!")
 
     max_seq_len = 25
     # x_s = np.ndarray(shape=(0, max_seq_len, 50, 100, 3))
@@ -236,8 +234,8 @@ def main():
     #     label_lens = np.concatenate([label_len, label_lens])
     #     input_lens = np.concatenate([input_len, input_lens])
     # TODO: add data path
-    x_path = DATA_PATH + '/../X.npz'
-    y_path = DATA_PATH + '/../y.npz'
+    x_path = DATA_PATH + '/X.npz'
+    y_path = DATA_PATH + '/y.npz'
     x_s = np.load(x_path)['x']
     y_s = np.load(y_path)['y']
     x_s = pad_input(x_s, max_seq_len)
@@ -250,7 +248,7 @@ def main():
 
     # 28 is outout size
     # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
-    print x_train.shape
+    print(x_train.shape)
     model = build_model(x_train.shape[1:], y_train.shape[1])
 
     # input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len

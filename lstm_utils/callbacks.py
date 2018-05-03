@@ -63,7 +63,7 @@ def decode(y_pred, input_length, greedy=False, beam_width=200, top_paths=1):
     #
     # decoded = K.ctc_decode(y_pred=y_pred, input_length=input_length,
     #                        greedy=greedy, beam_width=beam_width, top_paths=top_paths)
-    print(y_pred[0, :, 27])
+    #print(y_pred[0, :, 27])
     y_pred = math_ops.log(array_ops.transpose(y_pred, perm=[1, 0, 2]) + 1e-7)
     input_length = math_ops.to_int32(input_length)
 
@@ -132,7 +132,7 @@ class Statistics(keras.callbacks.Callback):
             fn = K.function([input_layer,K.learning_phase()],[output_layer,K.learning_phase()])
             y_pred = fn([input_data['the_input'],0])[0]
             #print ("I am y_pred", y_pred.shape)
-            print np.argmax(y_pred[0], axis = 1)
+            #print np.argmax(y_pred[0], axis = 1)
             decoded_res = decode(y_pred, np.squeeze(input_data['input_length']))
 
             for i in range(0, num_proc):
