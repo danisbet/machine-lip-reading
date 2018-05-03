@@ -126,9 +126,9 @@ def train(model, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0
     ##
     # Train model, typically will train for each speaker
     ## padding the labels
-    max_string_len = 10
-    if y_train.shape[1] != max_string_len:
-        y_train = pad_labels(y_train, max_string_len)
+    # max_string_len = 10
+    # if y_train.shape[1] != max_string_len:
+    #     y_train = pad_labels(y_train, max_string_len)
 
     adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
