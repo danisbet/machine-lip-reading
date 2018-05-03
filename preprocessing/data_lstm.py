@@ -1,7 +1,7 @@
 import numpy as np
 import os
-from align import read_align
-from video import read_video
+from preprocessing.align import read_align
+from preprocessing.video import read_video
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from scipy.ndimage import imread
 # CURRENT_PATH = '/home/ubuntu/assignments/machine-lip-reading/preprocessing'
@@ -30,13 +30,13 @@ def labels_to_text(labels):
     return text
 
 def get_sil_image():
-    img_dir = os.path.join(DATA_PATH, 'sil_img.png')
+    img_dir = os.path.join(CURRENT_PATH, 'sil_img.png')
     sil_img = imread(img_dir)
     return sil_img
 
 def load_data(datapath, speaker, verbose=True, num_samples=1000, ctc_encoding=True):
 
-    output_dir = DATA_PATH + '/' + speaker + '_np'
+    output_dir = "/global/scratch/alex_vlissidis/lipreading_data/" + speaker + '_np'
     if output_dir is not None and not os.path.exists(output_dir):
         os.makedirs(output_dir)
 

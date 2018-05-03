@@ -4,7 +4,7 @@ import keras
 import editdistance
 import csv
 import os
-from spell import Spell
+from lstm_utils.spell import Spell
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 def labels_to_text(labels):
     # 26 is space, 27 is CTC blank char
@@ -147,10 +147,11 @@ class Statistics(keras.callbacks.Callback):
 
 
     def on_train_begin(self, logs={}):
-        with open(os.path.join(self.output_dir, 'stats.csv'), 'wb') as csvfile:
-            csvw = csv.writer(csvfile)
-            csvw.writerow(
-                ["Epoch", "Samples", "Mean CER", "Mean CER (Norm)"])
+        #with open(os.path.join(self.output_dir, 'stats.csv'), 'wb') as csvfile:
+        #    csvw = csv.writer(csvfile)
+        #    csvw.writerow(
+        #        ["Epoch", "Samples", "Mean CER", "Mean CER (Norm)"])
+        return
 
     def on_epoch_end(self, epoch, logs={}):
         stats = self.get_statistics(self.num_sample_stats)

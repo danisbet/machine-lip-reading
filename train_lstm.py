@@ -96,9 +96,9 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 27, 52, 32)
     #  shape 2nd conv: (None, 20, 14, 26, 32)
-    x = TimeDistributed(Conv2D(filters = 64, kernel_size = 5, kernel_initializer='he_normal', strides = (2,2),
+    x = TimeDistributed(Conv2D(filters = 64, kernel_size=(3, 3), kernel_initializer='he_normal', strides = (2,2),
                              padding = 'same', activation = 'relu'))(x)
-    x = TimeDistributed(Conv2D(filters=64, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
+    x = TimeDistributed(Conv2D(filters=64, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2),
                                padding='same', activation='relu'))(x)
 
     ## Max pool on each time sequence and Dropout
@@ -109,8 +109,14 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 4, 7, 4)
-    x = TimeDistributed(Conv2D(filters=32, kernel_size=5, kernel_initializer='he_normal', strides=(2, 2),
+    x = TimeDistributed(Conv2D(filters=32, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2),
                                padding='same', activation='relu'))(x)
+
+    x = TimeDistributed(Conv2D(filters=96, kernel_size=(3, 3), strides=(2, 2), padding='same', activation='relu'))(x)
+
+    x = TimeDistributed(Conv2D(filters=96, kernel_size=(3, 3), strides=(2, 2), padding='same', activation='relu'))(x)
+
+    x = TimeDistributed(MaxPooling2D(pool_size=(1, 2), strides=None, name='max2'))(x)
 
     ## Flatten to gru
     #  shape: (None, 20, 112)
@@ -126,6 +132,8 @@ def build_model(input_size, output_size = 28, max_string_len = 10):
     #                            merge_mode='concat')(self.gru_1)
     ## dense (512, 28) with softmax
     #  shape: (None, 20, 28)
+    x_lstm = Dense(1024, activation='relu')(x_lstm)
+    x_lstm = Dense(1024, activation='relu')(x_lstm)
     x_lstm = Dense(output_size, kernel_initializer='he_normal', name='dense1')(x_lstm)
 
     ## prepare input for ctc loss
