@@ -191,12 +191,12 @@ def pad_input(x, max_str_len):
     #################
     # pad on axis = 1
     #################
-    sil_image = get_sil_image()
-    sil_image = [sil_image for _ in range(max_str_len - x.shape[1])]
-    sil_image = np.stack(sil_image, axis=0)
-    padding = [sil_image for _ in range(x.shape[0])]
-    padding = np.stack(padding, axis=0)
-    # padding = np.zeros((x.shape[0],max_str_len - x.shape[1],x.shape[2],x.shape[3],x.shape[4]))
+    # sil_image = get_sil_image()
+    # sil_image = [sil_image for _ in range(max_str_len - x.shape[1])]
+    # sil_image = np.stack(sil_image, axis=0)
+    # padding = [sil_image for _ in range(x.shape[0])]
+    # padding = np.stack(padding, axis=0)
+    padding = np.zeros((x.shape[0],max_str_len - x.shape[1],x.shape[2],x.shape[3],x.shape[4]))
     return np.concatenate((x, padding), axis=1)
 
 
