@@ -262,8 +262,7 @@ def main():
 
     # TODO: add visualization
     print("Plotting...")
-    ax2.plot(range(1, epochs + 1), history.history['loss'], 'tab:orange', label="loss")
-    ax2.plot(range(1, epochs + 1), history.history['val_loss'], 'tab:green', label="validation loss")
+
     f, (ax1, ax2) = plt.plot()
     ax1.plot(range(1, epochs+1), history.history['val_acc'], 'tab:blue', label="validation accuracy")
     ax1.plot(range(1, epochs+1), history.history['acc'], 'tab:red', label="training accuracy")
