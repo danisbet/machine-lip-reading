@@ -1,5 +1,3 @@
-from preprocessing.data_lstm import read_data_for_speaker
-from preprocessing.data_lstm import get_sil_image
 from lstm_utils.callbacks import Statistics
 import matplotlib as mpl
 mpl.use('Agg')
@@ -11,9 +9,6 @@ import time
 import datetime
 import argparse
 
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-from sklearn.model_selection import train_test_split
-
 from keras.models import Sequential
 from keras.layers.wrappers import TimeDistributed, Bidirectional
 from keras.layers.recurrent import GRU, LSTM
@@ -22,11 +17,16 @@ from keras.layers.convolutional import ZeroPadding3D, Conv2D
 from keras.layers.pooling import MaxPooling2D
 from keras.layers.core import Lambda, Dropout, Flatten, Dense, Activation
 from keras.optimizers import Adam
+from keras import regularizers
 from keras import backend as K
+from keras.models import Model
+from keras.applications.vgg16 import VGG16
+from keras import regularizers
+
+from sklearn.model_selection import train_test_split
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = "/global/scratch/alex_vlissidis"
-
 
 
 def build_model(input_size, output_size=28):
@@ -44,38 +44,19 @@ def build_model(input_size, output_size=28):
 
     # self.input_data = Input(name='the_input', shape=input_size, dtype='float32')
     input_data = Input(name='the_input', shape=input_size, dtype='float32')
-    '''
-    x = ZeroPadding3D(padding=(3, 5, 5), name='padding1')(input_data)
-    x = Conv3D(filters=32, kernel_size=(3, 5, 5), strides=(1, 2, 2), activation='relu',
-           kernel_initializer='he_normal', name='conv1')(x)
-    x = MaxPooling3D(pool_size=(1, 2, 2), strides=(1, 2, 2), name='max1')(x)
-    x = Dropout(0.5)(x)
-
-    x = ZeroPadding3D(padding=(1, 2, 2), name='padding2')(x)
-    x = Conv3D(64, (3, 5, 5), strides=(1, 1, 1), activation='relu', kernel_initializer='glorot_normal', name='conv2')(x)
-    x = MaxPooling3D(pool_size=(1, 2, 2), strides=(1, 2, 2), name='max2')(x)
-    x = Dropout(0.5)(x)
-
-    x = ZeroPadding3D(padding=(1, 1, 1), name='padding3')(x)
-    x = Conv3D(96, (3, 3, 3), strides=(1, 1, 1), activation='relu', kernel_initializer='glorot_normal', name='conv3')(x)
-    x = MaxPooling3D(pool_size=(1,2,2), strides=(1,2,2), name='max3')(x)
-    x = Dropout(0.5)(x)
-    '''
+    
     ## padding used on the height and width before convolving
     #  shape:(None, 20, 54, 104, 3)
     model = Sequential()
-    model.add(ZeroPadding3D(padding=(1, 2, 2),input_shape = (input_size), name='padding1'))
+    model.add(ZeroPadding3D(padding=(0, 2, 2),input_shape = (input_size), name='padding1'))
 
     ## 2D Convolution on each time sequence, relu activation
     #  shape 1st conv: (None, 20, 27, 52, 32)
     #  shape 2nd conv: (None, 20, 14, 26, 32)
     model.add(TimeDistributed(Conv2D(filters=34, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
     model.add(TimeDistributed(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='max1')))
-    model.add(TimeDistributed(Conv2D(filters=64, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
 
-    ## Max pool on each time sequence and Dropout
-    #  shape maxpool: (None, 20, 7, 13, 32)
-    #  shape dropout: (None, 20, 7, 13, 32)
+    model.add(TimeDistributed(Conv2D(filters=64, kernel_size=(3, 3), kernel_initializer='he_normal', strides=(2, 2), padding='same', activation='relu')))
     model.add(TimeDistributed(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='max2')))
     model.add(Dropout(0))
 
@@ -86,7 +67,7 @@ def build_model(input_size, output_size=28):
     ## Flatten to gru
     #  shape: (None, 20, 112)
     model.add(TimeDistributed(Flatten()))
-
+    model.add(Dropout(0.0))
     ## Bidirectional gru
     #  shape: (None, 20, 512)
     # x_lstm = LSTM(256, return_sequences=True, kernel_initializer='Orthogonal', name='lstm1')(input_lstm)
@@ -95,22 +76,43 @@ def build_model(input_size, output_size=28):
                            merge_mode='concat'))
     model.add(Bidirectional(GRU(256, return_sequences=True, kernel_initializer='Orthogonal', name='gru2'),
                            merge_mode='concat'))
-    ## dense (512, 28) with softmax
+    
     model.add(Flatten())
-    #  shape: (None, 20, 28)
-    model.add(Dense(1024, activation='relu', kernel_initializer='he_normal', name='dense1'))
+    model.add(Dense(1024, activation='relu', kernel_initializer='he_normal', name='fc1', kernel_regularizer=regularizers.l2(0.0)))
     model.add(Dense(output_size, kernel_initializer='he_normal', name='dense2'))
 
     ## prepare input for ctc loss
     model.add(Activation('softmax', name='softmax'))
-    #labels = Input(name='the_labels', shape=[max_string_len], dtype='int32')
-    #input_length = Input(name='input_length', shape=[1], dtype='int32')
-    #label_length = Input(name='label_length', shape=[1], dtype='int32')
     #loss = CTC('ctc', [y_pred, labels, input_length, label_length])
     model.summary()
 
     return model
 
+def build_model_vgg16(input_size, output_size=28):
+    input_data = Input(name='the_input', shape=input_size, dtype='float32')
+
+    vgg16 = VGG16(weights='imagenet', include_top=False, input_shape=input_size[1:], pooling='max')
+    x = TimeDistributed(vgg16)(input_data)
+    x = TimeDistributed(Flatten())(x)
+
+    # let's add a fully-connected layer
+    x = Bidirectional(GRU(256, return_sequences=True, name='gru1'), merge_mode='concat')(x)
+    x = Bidirectional(GRU(256, return_sequences=True, name='gru1'), merge_mode='concat')(x)
+    x = Flatten()(x)
+
+    x = Dense(4096, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Dropout(0.2)(x)
+    predictions = Dense(output_size, activation='softmax')(x)
+
+    # this is the model we will train
+    model = Model(inputs=input_data, outputs=predictions)
+
+    # first: train only the top layers (which were randomly initialized)
+    # i.e. freeze all convolutional InceptionV3 layers
+    for layer in vgg16.layers:
+       layer.trainable = False
+
+    return model
 
 def pad_labels(labels, max_string_len=10):
     ################################################################
@@ -121,8 +123,7 @@ def pad_labels(labels, max_string_len=10):
     return np.concatenate((labels, padding), axis=1)
 
 
-def train(model, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0.2,
-          start_epoch=0):
+def train(model, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0.2, start_epoch=0):
     ##
     # Train model, typically will train for each speaker
     ## padding the labels
@@ -130,11 +131,11 @@ def train(model, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0
     # if y_train.shape[1] != max_string_len:
     #     y_train = pad_labels(y_train, max_string_len)
 
-    adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
 
     if start_epoch > 0:
-        weight_file = os.path.join(CURRENT_PATH, "model_lstm_oh.h5")
+        weight_file = os.path.join(CURRENT_PATH, "models/model_lstm_oh.h5")
         model.load_weights(weight_file)
     ## callbacks when each epoch ends
     #  This will ouput character error rate which
@@ -147,44 +148,7 @@ def train(model, x_train, y_train, batch_size=256, epochs=100, val_train_ratio=0
                         shuffle=True,
                         initial_epoch=start_epoch,
                         verbose=1)
-
     return history
-
-
-def read_data():
-    ###############################
-    # only works for CNN (not test)
-    ###############################
-    oh = OneHotEncoder()
-    le = LabelEncoder()
-
-    x = list()
-    y = list()
-    t = list()
-    print("loading images...")
-    for i, (img, words) in enumerate(load_data(DATA_PATH, verbose=False, framebyframe=False)):
-        if img.shape[0] != 75:
-            continue
-        x.append(img)
-        y.append(words)
-
-        t += words.tolist()
-        if i == 3:
-            break
-
-    t = le.fit_transform(t)
-    oh.fit(t.reshape(-1, 1))
-
-    print("convering to np array...")
-    x = np.stack(x, axis=0)
-
-    print("transforming y...")
-    for i in range(len(y)):
-        y_ = le.transform(y[i])
-        y[i] = np.asarray(oh.transform(y_.reshape(-1, 1)).todense())
-    y = np.stack(y, axis=0)
-
-    return x, y
 
 
 def pad_input(x, max_str_len):
@@ -223,44 +187,31 @@ def main():
     # input_lens = np.array([])
 
     start = time.time()
-    # stack all the data
-    # for count in range(1, 5):
-    # TODO: this should be walk through files in np_s*
-    # range(1,5) is number of data 'npz'
-    # for count in range(1, 6):
-    #     print("loading data for ", count)
-    #     x, y = load_data(speaker_name, count)
-    #     x = pad_input(x, max_seq_len)
-    #     x_s = np.vstack((x, x_s))
-    #     y_s = np.vstack((y, y_s))
-    #     label_lens = np.concatenate([label_len, label_lens])
-    #     input_lens = np.concatenate([input_len, input_lens])
-    # TODO: add data path
+    
     x_path = DATA_PATH + '/X.npz'
     y_path = DATA_PATH + '/y.npz'
     x_s = np.load(x_path)['x']
     y_s = np.load(y_path)['y']
-    x_s = pad_input(x_s, max_seq_len)
+    #x_s = pad_input(x_s, max_seq_len)
+    
     end = time.time()
     print("load data took", end - start)
 
     print(x_s.shape, y_s.shape)
     y_s = y_s.astype(int)
-    x_train, x_test, y_train, y_test = train_test_split(x_s, y_s, test_size=0.2, shuffle=False)
+    x_train, x_test, y_train, y_test = train_test_split(x_s, y_s, test_size=0.2, shuffle=True)
 
     # 28 is outout size
     # run_name = datetime.datetime.now().strftime('%Y:%m:%d:%H:%M:%S')
     print(x_train.shape)
-    model = build_model(x_train.shape[1:], y_train.shape[1])
+    model = build_model_vgg16(x_train.shape[1:], y_train.shape[1])
 
     # input_len_train = np.ones((x_train.shape[0],1),dtype = np.int32)*max_seq_len
-    history = train(model, x_train, y_train, batch_size=200, epochs=epochs,
+    history = train(model, x_train, y_train, batch_size=256, epochs=epochs,
                     start_epoch=start_epoch)
 
     print("Finish Training...")
-    model.save('model_lstm_oh.h5')
-
-    # TODO: add visualization
+    model.save('models/model_lstm_oh.h5')
 
     print("Plotting...")
     f, (ax1, ax2) = plt.subplots(2, 1)
@@ -272,9 +223,8 @@ def main():
 
     ax1.legend()
     ax2.legend()
-    f.savefig('training.png', dpi=300)
+    f.savefig('figures/training_lstm.png', dpi=300)
     print("Done.")
-
 
 if __name__ == "__main__":
     main()
