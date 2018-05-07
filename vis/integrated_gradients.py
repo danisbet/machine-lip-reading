@@ -36,6 +36,6 @@ class IntegratedGradients(GradientSaliency):
 
         for alpha in np.linspace(0, 1, nsamples):
             input_step = input_baseline + alpha * input_diff
-            total_gradients += super(IntegratedGradients, self).get_mast(input_step)
+            total_gradients += super(IntegratedGradients, self).get_mask(input_step)
 
         return total_gradients * input_diff

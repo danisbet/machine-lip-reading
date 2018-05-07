@@ -70,6 +70,7 @@ class GuidedBackprop(SaliencyMask):
                 saver.restore(self.guided_sess, '/tmp/guided_backprop_ckpt')
 
                 self.imported_y = self.guided_graph.get_tensor_by_name(model.output.name)[0][output_index]
+                print model.output.name
                 self.imported_x = self.guided_graph.get_tensor_by_name(model.input.name)
 
                 self.guided_grads_node = tf.gradients(self.imported_y, self.imported_x)
