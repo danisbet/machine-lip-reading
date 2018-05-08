@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for speaker in {1..34}
+for speaker in {1..19}
 	do
 		base="http://spandh.dcs.shef.ac.uk/gridcorpus/s"
 		ext="/video/s"
